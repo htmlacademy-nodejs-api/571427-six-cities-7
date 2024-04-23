@@ -1,7 +1,7 @@
 # Личный проект «Шесть городов»
 
-- Студент: [Никита Сергеев](https://up.htmlacademy.ru/nodejs-api/7/user/571427).
-- Наставник: [Rail Sakhaviev](https://up.htmlacademy.ru/nodejs-api/7/user/1331891).
+* Студент: [Никита Сергеев](https://up.htmlacademy.ru/nodejs-api/7/user/571427).
+* Наставник: [Rail Sakhaviev](https://up.htmlacademy.ru/nodejs-api/7/user/1331891).
 
 ---
 
