@@ -6,7 +6,7 @@ import type { City, Housing, Comfort } from '../enums/index.js';
 // потом уберу, как добавится валидация кодом
 export type Offer = {
   // min 10 max 100
-  name: string;
+  title: string;
   // min 20 max 1024
   description: string;
   postDate: Date;
