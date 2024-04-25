@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-import type { Command } from './command.interface.js';
+import type { ICommand } from './command.interface.js';
 
 const COMMANDS = {
   HELP: '--help:                      # печатает этот текст',
@@ -8,7 +8,7 @@ const COMMANDS = {
   IMPORT: '--import <path>:             # импортирует данные из TSV'
 };
 
-export class HelpCommand implements Command {
+export class HelpCommand implements ICommand {
   getName(): string {
     return '--help';
   }

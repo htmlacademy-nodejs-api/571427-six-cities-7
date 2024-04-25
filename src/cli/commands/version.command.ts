@@ -1,13 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import type { Command } from './command.interface.js';
+import type { ICommand } from './command.interface.js';
 
-type PackageJSONConfig = {
+type TPackageJSONConfig = {
   version: string;
 };
 
-function isPackageJSONConfig(value: unknown): value is PackageJSONConfig {
+function isPackageJSONConfig(value: unknown): value is TPackageJSONConfig {
   return (
     typeof value === 'object' &&
     value !== null &&
@@ -16,7 +16,7 @@ function isPackageJSONConfig(value: unknown): value is PackageJSONConfig {
   );
 }
 
-export class VersionCommand implements Command {
+export class VersionCommand implements ICommand {
   constructor(private readonly filePath: string = 'package.json') {}
 
   private readVersion(): string {

@@ -1,8 +1,8 @@
 import { TSVFileReader } from '../../shared/libs/file-reader/index.js';
 
-import type { Command } from './command.interface.js';
+import type { ICommand } from './command.interface.js';
 
-export class ImportCommand implements Command {
+export class ImportCommand implements ICommand {
   getName(): string {
     return '--import';
   }

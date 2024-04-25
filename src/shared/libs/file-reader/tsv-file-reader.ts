@@ -1,15 +1,15 @@
 import { readFileSync } from 'node:fs';
 
-import type { Coords, Offer, User } from '../../types/index.js';
+import type { TCoords, TOffer, TUser } from '../../types/index.js';
 import type { City, Comfort, Housing, UserType } from '../../enums/index.js';
+import type { IFileReader } from './file-reader.interface.js';
 import type {
-  FileReader,
-  TextFlag,
-  AvatarValue,
-  StringifiedUser
-} from './file-reader.interface.js';
+  TTextFlag,
+  TAvatarValue,
+  TStringifiedUser
+} from './file-reader.type.js';
 
-export class TSVFileReader implements FileReader {
+export class TSVFileReader implements IFileReader {
   private rawData = '';
 
   constructor(private readonly filename: string) {}
@@ -20,14 +20,14 @@ export class TSVFileReader implements FileReader {
     }
   }
 
-  private parseRawDataToOffers(): Offer[] {
+  private parseRawDataToOffers(): TOffer[] {
     return this.rawData
       .split('\n')
       .filter((row) => row.trim().length > 0)
       .map((line) => this.parseLineToOffer(line));
   }
 
-  private parseLineToOffer(line: string): Offer {
+  private parseLineToOffer(line: string): TOffer {
     const [
       title,
       description,
@@ -58,8 +58,8 @@ export class TSVFileReader implements FileReader {
       city: city as City,
       preview,
       photoes: this.getArrFromStr(photoes),
-      isPremium: this.getFlag(isPremium as TextFlag),
-      isFavorite: this.getFlag(isFavorite as TextFlag),
+      isPremium: this.getFlag(isPremium as TTextFlag),
+      isFavorite: this.getFlag(isFavorite as TTextFlag),
       rating: this.getIntFromStr(rating),
       housing: housing as Housing,
       roomQuantity: this.getIntFromStr(roomQuantity),
@@ -81,7 +81,7 @@ export class TSVFileReader implements FileReader {
     return Number(str);
   }
 
-  getFlag(flag: TextFlag): boolean {
+  getFlag(flag: TTextFlag): boolean {
     return flag === 'true';
   }
 
@@ -91,7 +91,7 @@ export class TSVFileReader implements FileReader {
     return strArr.map((photo) => photo) as Value[];
   }
 
-  getCoordsFromStr(str: string): Coords {
+  getCoordsFromStr(str: string): TCoords {
     const [lat, lon] = this.separateStrBySemicolon(str);
 
     return {
@@ -104,7 +104,7 @@ export class TSVFileReader implements FileReader {
     return str.replace('\r', '');
   }
 
-  getUser({ name, email, avatar, password, type }: StringifiedUser): User {
+  getUser({ name, email, avatar, password, type }: TStringifiedUser): TUser {
     return {
       name,
       email,
@@ -118,7 +118,7 @@ export class TSVFileReader implements FileReader {
     return str.split(';');
   }
 
-  getAvatar(str: AvatarValue): User['avatar'] {
+  getAvatar(str: TAvatarValue): TUser['avatar'] {
     if (str === 'null') {
       return null;
     }
@@ -130,7 +130,7 @@ export class TSVFileReader implements FileReader {
     this.rawData = readFileSync(this.filename, { encoding: 'utf-8' });
   }
 
-  toArray(): Offer[] {
+  toArray(): TOffer[] {
     this.validateRawData();
     return this.parseRawDataToOffers();
   }
