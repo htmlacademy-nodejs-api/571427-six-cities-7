@@ -1,30 +1,24 @@
-import { readFileSync } from 'node:fs';
+import EventEmitter from 'node:events';
+import { createReadStream } from 'node:fs';
 
-import type { TCoords, TOffer, TUser } from '../../types/index.js';
+import type { TCoords, TOffer } from '../../types/index.js';
 import type { City, Comfort, Housing, UserType } from '../../enums/index.js';
 import type { IFileReader } from './file-reader.interface.js';
-import type {
-  TTextFlag,
-  TAvatarValue,
-  TStringifiedUser
-} from './file-reader.type.js';
 
-export class TSVFileReader implements IFileReader {
-  private rawData = '';
+const CHUNK_SIZE = 16384;
 
-  constructor(private readonly filename: string) {}
+const getCoordsFromStr = (str: string): TCoords => {
+  const [lat, lon] = str.split(';');
 
-  private validateRawData(): void {
-    if (!this.rawData) {
-      throw new Error('File was not read');
-    }
-  }
+  return {
+    latitude: Number(lat),
+    longitude: Number(lon)
+  };
+};
 
-  private parseRawDataToOffers(): TOffer[] {
-    return this.rawData
-      .split('\n')
-      .filter((row) => row.trim().length > 0)
-      .map((line) => this.parseLineToOffer(line));
+export class TSVFileReader extends EventEmitter implements IFileReader {
+  constructor(private readonly filename: string) {
+    super();
   }
 
   private parseLineToOffer(line: string): TOffer {
@@ -57,81 +51,53 @@ export class TSVFileReader implements IFileReader {
       postDate: new Date(postDate),
       city: city as City,
       preview,
-      photoes: this.getArrFromStr(photoes),
-      isPremium: this.getFlag(isPremium as TTextFlag),
-      isFavorite: this.getFlag(isFavorite as TTextFlag),
-      rating: this.getIntFromStr(rating),
+      photoes: photoes.split(';'),
+      isPremium: isPremium === 'true',
+      isFavorite: isFavorite === 'true',
+      rating: Number(rating),
       housing: housing as Housing,
-      roomQuantity: this.getIntFromStr(roomQuantity),
-      guestQuantity: this.getIntFromStr(guestQuantity),
-      rentCost: this.getIntFromStr(rentCost),
-      comfort: this.getArrFromStr<Comfort>(comfort),
-      user: this.getUser({
+      roomQuantity: Number(roomQuantity),
+      guestQuantity: Number(guestQuantity),
+      rentCost: Number(rentCost),
+      comfort: comfort.split(';') as Comfort[],
+      user: {
         name: userName,
         email: userEmail,
-        avatar: userAvatar,
+        avatar: userAvatar === 'null' ? undefined : userAvatar,
         password: userPassword,
-        type: userType
-      }),
-      coords: this.getCoordsFromStr(this.cutCRValue(latlon))
+        type: userType as UserType
+      },
+      coords: getCoordsFromStr(this.cutCRValue(latlon))
     };
   }
 
-  getIntFromStr(str: string): number {
-    return Number(str);
-  }
-
-  getFlag(flag: TTextFlag): boolean {
-    return flag === 'true';
-  }
-
-  getArrFromStr<Value = string>(str: string): Value[] {
-    const strArr = this.separateStrBySemicolon(str);
-
-    return strArr.map((photo) => photo) as Value[];
-  }
-
-  getCoordsFromStr(str: string): TCoords {
-    const [lat, lon] = this.separateStrBySemicolon(str);
-
-    return {
-      latitude: this.getIntFromStr(lat),
-      longitude: this.getIntFromStr(lon)
-    };
-  }
-
-  cutCRValue(str: string): string {
+  cutCRValue(str: string) {
     return str.replace('\r', '');
   }
 
-  getUser({ name, email, avatar, password, type }: TStringifiedUser): TUser {
-    return {
-      name,
-      email,
-      avatar: this.getAvatar(avatar),
-      password,
-      type: type as UserType
-    };
-  }
+  async read() {
+    const readStream = createReadStream(this.filename, {
+      highWaterMark: CHUNK_SIZE,
+      encoding: 'utf-8'
+    });
 
-  separateStrBySemicolon(str: string): string[] {
-    return str.split(';');
-  }
+    let remainingData = '';
+    let nextLinePosition = -1;
+    let importedRowCount = 0;
 
-  getAvatar(str: TAvatarValue): TUser['avatar'] {
-    if (str === 'null') {
-      return null;
+    for await (const chunk of readStream) {
+      remainingData += chunk.toString();
+
+      while ((nextLinePosition = remainingData.indexOf('\n')) >= 0) {
+        const completeRow = remainingData.slice(0, nextLinePosition + 1);
+        remainingData = remainingData.slice(++nextLinePosition);
+        importedRowCount++;
+
+        const parsedOffer = this.parseLineToOffer(completeRow);
+        this.emit('line', parsedOffer);
+      }
     }
 
-    return str;
-  }
-
-  read(): void {
-    this.rawData = readFileSync(this.filename, { encoding: 'utf-8' });
-  }
-
-  toArray(): TOffer[] {
-    this.validateRawData();
-    return this.parseRawDataToOffers();
+    this.emit('end', importedRowCount);
   }
 }

@@ -3,7 +3,8 @@ import {
   CLIApplication,
   HelpCommand,
   VersionCommand,
-  ImportCommand
+  ImportCommand,
+  GenerateCommand
 } from './cli/index.js';
 
 function bootstrap() {
@@ -11,7 +12,8 @@ function bootstrap() {
   cliApplication.registerCommands([
     new HelpCommand(),
     new VersionCommand(),
-    new ImportCommand()
+    new ImportCommand(),
+    new GenerateCommand()
   ]);
 
   cliApplication.processCommand(process.argv);
