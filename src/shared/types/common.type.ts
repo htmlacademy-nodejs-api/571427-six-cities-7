@@ -1,6 +1,6 @@
-export type TNullable<Value> = Value | null;
+export type TNullable<T> = T | null;
 
 export type TCoords = {
-  latitude: number;
-  longitude: number;
+  lat: number;
+  lon: number;
 };

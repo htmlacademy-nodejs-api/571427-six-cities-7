@@ -1,0 +1,90 @@
+{
+  "api": {
+    "titles": [
+      "Лучшее предложение",
+      "Топ хата!",
+      "Дворец",
+      "Выгодный отель",
+      "Царская комната"
+    ],
+    "descriptions": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquet nec ullamcorper sit amet risus nullam eget. Odio ut sem nulla pharetra. Amet commodo nulla facilisi nullam vehicula. Condimentum lacinia quis vel eros. Tempus imperdiet nulla malesuada pellentesque. Ornare massa eget egestas purus viverra accumsan. Mauris vitae ultricies leo integer malesuada nunc vel risus commodo. Felis imperdiet proin fermentum leo vel orci porta. Diam in arcu cursus euismod quis viverra. Faucibus in ornare quam viverra. Dignissim cras tincidunt lobortis feugiat vivamus at augue eget. Ut lectus arcu bibendum at varius vel pharetra vel turpis.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero nunc consequat interdum varius. Id interdum velit laoreet id donec ultrices tincidunt arcu non. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Etiam erat velit scelerisque in dictum non consectetur a erat. Quam adipiscing vitae proin sagittis nisl rhoncus mattis. Non blandit massa enim nec dui nunc mattis. Pellentesque id nibh tortor id. Fames ac turpis egestas maecenas pharetra convallis posuere. Id aliquet risus feugiat in ante metus dictum at. Condimentum mattis pellentesque id nibh tortor id aliquet lectus proin. Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Orci ac auctor augue mauris augue neque gravida in. Quam pellentesque nec nam aliquam sem. Interdum velit euismod in pellentesque massa placerat duis ultricies lacus. Id neque aliquam vestibulum morbi blandit cursus risus at ultrices. Ornare arcu odio ut sem nulla pharetra diam sit. Ut tortor pretium viverra suspendisse potenti. In hac habitasse platea dictumst quisque sagittis purus sit amet. Neque volutpat ac tincidunt vitae semper quis. Viverra accumsan in nisl nisi scelerisque eu ultrices. Natoque penatibus et magnis dis parturient montes nascetur ridiculus.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Id diam vel quam elementum pulvinar etiam non. Habitasse platea dictumst quisque sagittis purus sit. Purus sit amet volutpat consequat mauris nunc. Ultricies mi quis hendrerit dolor magna eget. Et netus et malesuada fames ac turpis. Nibh venenatis cras sed felis. Nec ullamcorper sit amet risus. Natoque penatibus et magnis dis parturient montes nascetur ridiculus. Vulputate enim nulla aliquet porttitor lacus luctus accumsan tortor posuere. Posuere morbi leo urna molestie. Ridiculus mus mauris vitae ultricies leo integer malesuada nunc. Risus viverra adipiscing at in tellus integer. Elementum facilisis leo vel fringilla est. Nisl vel pretium lectus quam id leo in vitae turpis.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sit amet risus nullam eget felis eget nunc lobortis mattis. Velit egestas dui id ornare arcu. Aenean et tortor at risus viverra. Arcu odio ut sem nulla. Quisque non tellus orci ac auctor. Sed augue lacus viverra vitae congue eu. Mattis rhoncus urna neque viverra justo nec ultrices dui. Et ligula ullamcorper malesuada proin libero nunc. Enim nec dui nunc mattis. Leo vel fringilla est ullamcorper eget nulla. Tellus molestie nunc non blandit massa. Proin fermentum leo vel orci porta non pulvinar neque laoreet. At tellus at urna condimentum mattis. Dignissim convallis aenean et tortor at."
+    ],
+    "cities": [
+      "Paris",
+      "Cologne",
+      "Brussels",
+      "Amsterdam",
+      "Hamburg",
+      "Dusseldorf"
+    ],
+    "previews": [
+      "Paris.jpg",
+      "Cologne.jpg",
+      "Brussels.jpg",
+      "Amsterdam.jpg",
+      "Hamburg.jpg",
+      "Dusseldorf.jpg"
+    ],
+    "photoes": [
+      "photo1.jpg",
+      "photo2.jpg",
+      "photo3.jpg",
+      "photo4.jpg",
+      "photo5.jpg",
+      "photo6.jpg",
+      "photo7.jpg",
+      "photo8.jpg",
+      "photo9.jpg",
+      "photo10jpg"
+    ],
+    "housings": ["apartment", "house", "room", "hotel"],
+    "comforts": [
+      "Breakfast",
+      "Air conditioning",
+      "Laptop friendly workspace",
+      "Baby seat",
+      "Washer",
+      "Towels",
+      "Fridge"
+    ],
+    "names": [
+      "Геральт из Ривии",
+      "Гейб Ньюэлл",
+      "Джонни Сильверхэнд",
+      "Кратос",
+      "Лара Крофт",
+      "Роджер Желязны",
+      "Андрес Иньеста"
+    ],
+    "emails": [
+      "gaben@gmail.com",
+      "geralt@gmail.com",
+      "kratos@mail.ru",
+      "silver@hand.com",
+      "hello@yandex.ru"
+    ],
+    "avatars": [
+      "user.jpg",
+      "photo.jpg",
+      "awesome-avatar.jpg",
+      "roland.jpg",
+      "smite.jpg",
+      "coffee.jpg"
+    ],
+    "passwords": [
+      "ГеральтизРивии123",
+      "ГейбНьюэлл321",
+      "ДжонниСильверхэнд22",
+      "Кратос333",
+      "ЛараКрофт1",
+      "РоджерЖелязны77",
+      "АндресИньеста0"
+    ]
+  }
+}

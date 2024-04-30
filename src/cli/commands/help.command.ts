@@ -2,12 +2,6 @@ import chalk from 'chalk';
 
 import type { ICommand } from './command.interface.js';
 
-const COMMANDS = {
-  HELP: '--help:                      # печатает этот текст',
-  VERSION: '--version:                   # выводит номер версии',
-  IMPORT: '--import <path>:             # импортирует данные из TSV'
-};
-
 export class HelpCommand implements ICommand {
   getName(): string {
     return '--help';
@@ -19,9 +13,10 @@ export class HelpCommand implements ICommand {
         Пример:
             ${chalk.blue('cli.js --<command> [--arguments]')}
         Команды:
-            ${chalk.green(COMMANDS.HELP)}
-            ${chalk.magenta(COMMANDS.VERSION)}
-            ${chalk.cyan(COMMANDS.IMPORT)}
+            ${chalk.red('--help')}:                            # ${chalk.cyan('печатает этот текст')}
+            ${chalk.red('--version')}:                         # ${chalk.cyan('выводит номер версии')}
+            ${chalk.red('--import <path>')}:                   # ${chalk.cyan('импортирует данные из TSV')}
+            ${chalk.red('--generate <count> <path> <url>')}:   # ${chalk.cyan('гененирует данные в TSV')}
     `);
   }
 }
