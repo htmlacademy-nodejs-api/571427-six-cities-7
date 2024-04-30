@@ -29,6 +29,5 @@ export type TOffer = {
   rentCost: number;
   comfort: Comfort[];
   user: TUser;
-  // TODO: lat и lon жестко зашиты, нужно понять вынести ли их в константы или нет. или представить как tuple?
   coords: TCoords;
 };

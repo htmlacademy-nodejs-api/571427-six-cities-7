@@ -1,4 +1,4 @@
-import type { TUndefined } from './common.type.js';
+import type { TNullable } from './common.type.js';
 import type { UserType } from '../enums/index.js';
 
 // TODO: пока что пишу над типом то, как будет валидироваться
@@ -8,7 +8,7 @@ export type TUser = {
   name: string;
   // валидное мыло, проверять через регулярку
   email: string;
-  avatar: TUndefined<string>;
+  avatar: TNullable<string>;
   // min 6 max 12
   password: string;
   type: UserType;

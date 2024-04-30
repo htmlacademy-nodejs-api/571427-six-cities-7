@@ -17,6 +17,7 @@ import {
   FIRST_WEEK_DAY,
   LAST_WEEK_DAY
 } from './tsv-offer-generator.constants.js';
+import { CITY_COORDS } from '../../constants/index.js';
 
 import type { TMockServerData } from '../../types/index.js';
 import type { IOfferGenerator } from './offer-generator.interface.js';
@@ -34,6 +35,7 @@ export class TSVOfferGenerator implements IOfferGenerator {
     const isFavorite = getRandomItem(['true', 'false']);
     const rating = generateRandomValue(MIN_RATING, MAX_RATING).toString();
     const housing = getRandomItem(this.mockData.housings);
+
     const roomQuantity = generateRandomValue(
       MIN_ROOM_QUANTITY,
       MAX_ROOM_QUANTITY
@@ -42,6 +44,7 @@ export class TSVOfferGenerator implements IOfferGenerator {
       MIN_GUEST_QUANTITY,
       MAX_GUEST_QUANTITY
     ).toString();
+
     const rentCost = generateRandomValue(MIN_PRICE, MAX_PRICE).toString();
     const comfort = getRandomItems(this.mockData.comforts).join(';');
     const userName = getRandomItem(this.mockData.names);
@@ -49,7 +52,10 @@ export class TSVOfferGenerator implements IOfferGenerator {
     const userAvatar = getRandomItem(this.mockData.avatars);
     const userPassword = getRandomItem(this.mockData.passwords);
     const userType = getRandomItem([UserType.Pro, UserType.Ordinary]);
-    const latlon = getRandomItem(this.mockData.coords).join(';');
+
+    const { lat, lon } = CITY_COORDS[city];
+
+    const latlon = `${lat};${lon}`;
     const postDate = dayjs()
       .subtract(generateRandomValue(FIRST_WEEK_DAY, LAST_WEEK_DAY), 'day')
       .toISOString();

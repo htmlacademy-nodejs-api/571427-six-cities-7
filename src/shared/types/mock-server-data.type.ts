@@ -1,4 +1,3 @@
-import type { TCoordsTuple } from './common.type.js';
 import type { Comfort, Housing, City } from '../enums/index.js';
 
 export type TMockServerData = {
@@ -13,5 +12,4 @@ export type TMockServerData = {
   emails: string[];
   avatars: string[];
   passwords: string[];
-  coords: TCoordsTuple[];
 };

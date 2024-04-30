@@ -11,8 +11,8 @@ const getCoordsFromStr = (str: string): TCoords => {
   const [lat, lon] = str.split(';');
 
   return {
-    latitude: Number(lat),
-    longitude: Number(lon)
+    lat: Number(lat),
+    lon: Number(lon)
   };
 };
 
@@ -63,7 +63,7 @@ export class TSVFileReader extends EventEmitter implements IFileReader {
       user: {
         name: userName,
         email: userEmail,
-        avatar: userAvatar === 'null' ? undefined : userAvatar,
+        avatar: userAvatar === 'null' ? null : userAvatar,
         password: userPassword,
         type: userType as UserType
       },
