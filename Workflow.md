@@ -66,6 +66,14 @@ npm run mock:server
 
 Позволяет развернуть сервер с mock данными
 
+#### Запускает REST Application
+
+```bash
+npm run start:dev
+```
+
+RESP Application в себе содержит logger(все логи попадают в ./logs/rest.log) и схему данных
+
 #### Запустить проект
 
 ```bash
