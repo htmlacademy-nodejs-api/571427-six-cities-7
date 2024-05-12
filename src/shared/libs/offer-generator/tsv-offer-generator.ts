@@ -51,7 +51,7 @@ export class TSVOfferGenerator implements IOfferGenerator {
     const userEmail = getRandomItem(this.mockData.emails);
     const userAvatar = getRandomItem(this.mockData.avatars);
     const userPassword = getRandomItem(this.mockData.passwords);
-    const userType = getRandomItem([UserType.Pro, UserType.Ordinary]);
+    const userType = getRandomItem([UserType.Pro, UserType.Common]);
 
     const { lat, lon } = CITY_COORDS[city];
 
