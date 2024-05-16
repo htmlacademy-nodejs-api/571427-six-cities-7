@@ -27,7 +27,7 @@ export type TOffer = {
   guestQuantity: number;
   // min 100 max 100_000
   rentCost: number;
-  comfort: Comfort[];
+  comforts: Comfort[];
   user: TUser;
   coords: TCoords;
 };

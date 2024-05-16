@@ -46,7 +46,7 @@ export class TSVOfferGenerator implements IOfferGenerator {
     ).toString();
 
     const rentCost = generateRandomValue(MIN_PRICE, MAX_PRICE).toString();
-    const comfort = getRandomItems(this.mockData.comforts).join(';');
+    const comforts = getRandomItems(this.mockData.comforts).join(';');
     const userName = getRandomItem(this.mockData.names);
     const userEmail = getRandomItem(this.mockData.emails);
     const userAvatar = getRandomItem(this.mockData.avatars);
@@ -74,7 +74,7 @@ export class TSVOfferGenerator implements IOfferGenerator {
       roomQuantity,
       guestQuantity,
       rentCost,
-      comfort,
+      comforts,
       userName,
       userEmail,
       userAvatar,

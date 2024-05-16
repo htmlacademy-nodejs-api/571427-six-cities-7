@@ -14,7 +14,7 @@ export class CreateOfferDto {
   roomQuantity: TOffer['roomQuantity'];
   guestQuantity: TOffer['guestQuantity'];
   rentCost: TOffer['rentCost'];
-  comfort: TOffer['comfort'];
+  comforts: TOffer['comforts'];
   userId: string;
   coords: TOffer['coords'];
 }

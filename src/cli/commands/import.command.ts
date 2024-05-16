@@ -16,16 +16,23 @@ import {
   type IDatabaseClient
 } from '../../shared/libs/database-client/index.js';
 import { ConsoleLogger } from '../../shared/libs/logger/console.logger.js';
-import { DEFAULT_DB_PORT, DEFAULT_USER_PASSWORD } from './command.constant.js';
+import { DEFAULT_DB_PORT } from './command.constant.js';
+import {
+  DefaultComfortService,
+  ComfortModel,
+  type IComfortService
+} from '../../shared/modules/comfort/index.js';
 
 import type { ILogger } from '../../shared/libs/logger/index.js';
 import type { TOffer } from '../../shared/types/offer.type.js';
 import type { ICommand } from './command.interface.js';
+import type { Comfort } from '../../shared/enums/index.js';
 
 export class ImportCommand implements ICommand {
   private userService: IUserService;
   private offerService: IOfferService;
   private databaseClient: IDatabaseClient;
+  private comfortService: IComfortService;
   private logger: ILogger;
   private salt: string;
 
@@ -33,6 +40,7 @@ export class ImportCommand implements ICommand {
     this.logger = new ConsoleLogger();
     this.offerService = new DefaultOfferService(this.logger, OfferModel);
     this.userService = new DefaultUserService(this.logger, UserModel);
+    this.comfortService = new DefaultComfortService(this.logger, ComfortModel);
     this.databaseClient = new MongoDatabaseClient(this.logger);
   }
 
@@ -47,13 +55,16 @@ export class ImportCommand implements ICommand {
   };
 
   private async saveOffer(offer: TOffer) {
-    const user = await this.userService.findOrCreate(
-      {
-        ...offer.user,
-        password: DEFAULT_USER_PASSWORD
-      },
-      this.salt
-    );
+    const comforts: Comfort[] = [];
+    const user = await this.userService.findOrCreate(offer.user, this.salt);
+
+    for (const name of offer.comforts) {
+      const existComfort = await this.comfortService.findByComfortNameOrCreate(
+        name,
+        { name }
+      );
+      comforts.push(existComfort.id);
+    }
 
     await this.offerService.create({
       title: offer.title,
@@ -69,7 +80,7 @@ export class ImportCommand implements ICommand {
       roomQuantity: offer.roomQuantity,
       guestQuantity: offer.guestQuantity,
       rentCost: offer.rentCost,
-      comfort: offer.comfort,
+      comforts,
       userId: user.id,
       coords: offer.coords
     });
