@@ -5,6 +5,12 @@ import {
   modelOptions
 } from '@typegoose/typegoose';
 import { createSHA256 } from '../../helpers/index.js';
+import {
+  MAX_USER_NAME_LENGTH,
+  MIN_USER_NAME_LENGTH,
+  MIN_PASSWORD_LENGTH,
+  MAX_PASSWORD_LENGTH
+} from '../../constants/index.js';
 
 import type { TUser } from '../../types/index.js';
 
@@ -20,16 +26,32 @@ export interface UserEntity extends defaultClasses.Base {}
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class UserEntity extends defaultClasses.TimeStamps implements TUser {
-  @prop({ required: true, default: '' })
+  @prop({
+    required: true,
+    default: '',
+    min: MIN_USER_NAME_LENGTH,
+    max: MAX_USER_NAME_LENGTH,
+    trim: true
+  })
   public name: TUser['name'];
 
-  @prop({ required: true, unique: true })
+  @prop({
+    required: true,
+    unique: true
+    // TODO: найти регулярку
+    // match: [сюда регулярку, 'Please fill a valid email address']
+  })
   public email: TUser['email'];
 
   @prop({ required: false, default: '' })
   public avatar: TUser['avatar'];
 
-  @prop({ required: true, default: '' })
+  @prop({
+    required: true,
+    default: '',
+    min: MIN_PASSWORD_LENGTH,
+    max: MAX_PASSWORD_LENGTH
+  })
   public password: TUser['password'];
 
   @prop({ required: true })

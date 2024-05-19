@@ -1,0 +1,489 @@
+openapi: 3.1.0
+info:
+  title: API сервер для проекта «Шесть городов»
+  description: |-
+    * Список ресурсов и маршрутов сервера «Шесть городов»
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+tags:
+  - name: users
+    description: Действия с пользователем
+  - name: offers
+    description: Действия с объявлениями
+  - name: comments
+    description: Действия с комментариями
+
+paths:
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя
+
+      requestBody:
+        description: Информация для создания нового пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userConfidential'
+        required: true
+
+      responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "409":
+          description: Пользователь с таким email уже существует
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизирует пользователя на основе мейла и пароля
+
+      requestBody:
+        description: Информация для авторизации пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userLogin'
+        required: true
+
+      responses:
+        "201":
+          description: Успешная авторизация по переданным данным
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userAuthToken'
+
+        "409":
+          description: Неверная пара email\пароль
+
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+
+      requestBody:
+        description: Информация для проверки состояния пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userAuthToken'
+        required: true
+
+      responses:
+        "201":
+          description: Сессия активна
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "409":
+          description: Неверный токен
+
+  /users/logout:
+    post:
+      tags:
+        - users
+      summary: Деавторизация пользователя
+      description: Деавторизирует пользователя из аккаунта
+
+      requestBody:
+        description: Информация для деавторизации
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userAuthToken'
+        required: true
+
+      responses:
+        "201":
+          description: Успешная деавторизация
+
+        "409":
+          description: Неверный токен
+
+  /offers:
+    get:
+      tags:
+        - offers
+      summary: Получает список предложений
+      description: Получает список предложений по переданным параметрам
+
+      requestBody:
+        description: Информация для получения списка предложений
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/offersQuery'
+
+      responses:
+        "201":
+          description: Список предложений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offers'
+
+  /offers/create:
+    post:
+      tags:
+        - offers
+      summary: Создание предложения
+      description: Создает новое предложение
+
+      requestBody:
+        description: Информация для создания нового предложения
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/offerDetail'
+        required: true
+
+      responses:
+        "201":
+          description: Предложение создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offerDetail'
+
+        "401":
+          description: Нужно авторизоваться
+
+        "409":
+          description: Предложение не создано. Переданные данные не верны
+
+  /offers/${offerId}:
+    get:
+      tags:
+        - offers
+      summary: Получает информацию о предложении
+      description: Получает детальную информацию о предложении
+
+      responses:
+        "201":
+          description: Детальная информация о предложении
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offerDetail'
+
+    patch:
+      tags:
+        - offers
+      summary: Обновляет объект предложения
+      description: Обновляет объект предложения
+
+      responses:
+        "201":
+          description: Обновленная информация о предложении
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offerDetail'
+
+        "401":
+          description: Нужно авторизоваться
+
+        "409":
+          description: Переданы неверные данные
+
+    delete:
+      tags:
+        - offers
+      summary: Удаляет объект предложения
+      description: Удаляет объект предложения
+
+      responses:
+        "201":
+          description: Объект предложения успешно удален
+
+        "401":
+          description: Нужно авторизоваться
+
+        "409":
+          description: Переданы неверные данные
+
+  /offers/${offerId}/comments:
+    get:
+      tags:
+        - offers
+      summary: Получает список комментариев к предложению
+      description: Получает список комментариев к предложению
+
+      requestBody:
+        description: Информация для получения списка комментариев
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/offersCommentsQuery'
+
+      responses:
+        "201":
+          description: Список комментариев к предложений
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comments'
+
+  /comments:
+    get:
+      tags:
+        - comments
+      summary: Получает список комментариев
+      description: Получает комментарии к предложению по его идентификатору
+
+      requestBody:
+        description: Информация для получения комментариев к предложению
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/commentsQuery'
+        required: true
+
+      responses:
+        "201":
+          description: Список комментариев
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comments'
+
+  /comments/create:
+    post:
+      tags:
+        - comments
+      summary: Создаёт комментарий
+      description: Создаёт комментарий к предложению
+
+      requestBody:
+        description: Информация для создания комментария к предложению
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/commentsQuery'
+        required: true
+
+      responses:
+        "201":
+          description: Комментарий создан. Объект комментария
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+
+        "400":
+          description: Переданы не верные данные. Комментарий должен быть от 5 и до 1024 символов. Рейтинг должен быть от 1 до 5
+
+        "401":
+          description: Создание комментария может производить только авторизованный пользователь
+
+        "409":
+          description: Предложение с таким идентификатором отсутствует
+
+components:
+  schemas:
+    user:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        name:
+          type: string
+          example: Keks
+
+        type:
+          type: string
+          example: Обычный
+
+        avatar:
+          type: string
+          format: binary
+
+    userConfidential:
+      allOf:
+        - $ref: '#/components/schemas/user'
+        - type: object
+          properties:
+            password:
+              type: string
+              example: 123456
+
+    userAuthToken:
+      type: object
+
+      properties:
+        token:
+          type: string
+          example: hawhe21hoiho2asd2132
+
+    userLogin:
+      type: object
+
+      properties:
+        email: 
+          type: string
+          example: keks@htmlacademy.ru
+
+        password: 
+          type: string
+          example: 123456
+
+    offer:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Супер предложение!
+        postDate:
+          type: string
+          format: date-time
+          example: 2022-04-06T08:45:40.283Z
+        city:
+          type: string
+          example: Paris
+        preview:
+          type: string
+          example: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+        isPremium:
+          type: boolean
+          example: true
+        isFavorite:
+          type: boolean
+          example: false
+        rating:
+          type: number
+          example: 5
+        housing:
+          type: string
+          example: apartment
+        rentCost:
+          type: number
+          example: 1337
+        commentCount:
+          type: number
+          example: 322
+
+    offers:
+      type: array
+      items:
+        $ref: '#/components/schemas/offer'
+
+    offerDetail:
+      allOf:
+        - $ref: '#/components/schemas/offer'
+        - type: object
+          properties:
+            description:
+              type: string
+              example: Это крутое предлжения явно не оставит тебя равнодушным
+            photoes:
+              type: array
+              items:
+                type: string
+              example: ['path/to/photo1', 'path/to/photo2']
+            roomQuantity:
+              type: number
+              example: 7
+            guestQuantity:
+              type: number
+              example: 4
+            comforts:
+              type: array
+              items:
+                type: string
+              example: ['Breakfast', 'Laptop friendly workspace', 'Fridge']
+            userId:
+              type: string
+              example: 6643e34f81c7dfc04882c0cd
+            coords:
+              type: object
+              properties:
+                lat:
+                  type: number
+                  example: 48.85661
+                lon:
+                  type: number
+                  example: 2.351499
+
+    offersQuery:
+      type: object
+
+      properties:
+        limit:
+          type: number
+          example: 60
+
+        sorting:
+          type: string
+          example: ASC
+
+        isFavorite:
+          type: boolean
+          example: true
+
+        isPremium:
+          type: boolean
+          example: false
+
+        city:
+          type: string
+          example: Paris
+    
+    offersCommentsQuery:
+      type: object
+
+      properties:
+        limit:
+          type: number
+          example: 50
+
+    comment:
+      type: object
+
+      properties:
+        text:
+          type: string
+          example: Отличное предложение!
+
+        creationDate:
+          type: string
+          format: date-time
+          example: 2022-04-06T08:45:40.283Z
+
+        rating:
+          type: number
+          example: 5
+
+        author:
+          type: string
+          example: 6643e21523bd8327437a6ff6
+
+    comments:
+      type: array
+      items:
+        $ref: '#/components/schemas/comment'
+
+    commentsQuery:
+      type: object
+
+      properties:
+        offerId:
+          type: string
+          example: 12345
