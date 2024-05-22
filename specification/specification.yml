@@ -137,7 +137,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/offers'
 
-  /offers/create:
     post:
       tags:
         - offers
@@ -238,6 +237,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/comments'
+
+  /offers/${offerId}/toggle-favorite:
+    post:
+      tags:
+        - offers
+      summary: Добавление или удаление из избранных
+      description: Добавление или удаление из избранных
+
+      requestBody:
+        description: Информация для добавления\удаления из избранного
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/toggleFavorite'
+        required: true
+
+      responses:
+        "201":
+          description: Действие успешно совершено
+
+        "401":
+          description: Нужно авторизоваться
+
+  /offers/favorites:
+    get:
+      tags:
+        - offers
+      summary: Получает избранные предложения
+      description: Получает избранные предложения пользователя
+
+      responses:
+        "201":
+          description: Информация об избранных предложениях
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offers'
+
+        "401":
+          description: Нужно авторизоваться
+
+  /offers/premiums:
+    get:
+      tags:
+        - offers
+      summary: Получает премиальные предложения по выбранному городу
+      description: Получает не больше 3ёх премиальных предложений по выбранному городу
+
+      requestBody:
+        description: Информация для получения премиальных предложений
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/premiumOffers'
+
+      responses:
+        "201":
+          description: Информация о премиальных предложениях
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offers'
 
   /comments:
     get:
@@ -453,6 +514,22 @@ components:
         limit:
           type: number
           example: 50
+
+    premiumOffers:
+      type: object
+
+      properties:
+        city:
+          type: string
+          example: Paris
+
+    toggleFavorite:
+      type: object
+
+      properties:
+        isFavorite:
+          type: boolean
+          example: true
 
     comment:
       type: object
