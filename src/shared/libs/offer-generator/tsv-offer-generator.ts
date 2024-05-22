@@ -6,6 +6,11 @@ import {
 } from '../../helpers/index.js';
 import { UserType } from '../../enums/user-type.enum.js';
 import {
+  FIRST_WEEK_DAY,
+  LAST_WEEK_DAY
+} from './tsv-offer-generator.constants.js';
+import {
+  CITY_COORDS,
   MIN_PRICE,
   MIN_GUEST_QUANTITY,
   MIN_RATING,
@@ -13,11 +18,8 @@ import {
   MAX_GUEST_QUANTITY,
   MAX_PRICE,
   MAX_RATING,
-  MAX_ROOM_QUANTITY,
-  FIRST_WEEK_DAY,
-  LAST_WEEK_DAY
-} from './tsv-offer-generator.constants.js';
-import { CITY_COORDS } from '../../constants/index.js';
+  MAX_ROOM_QUANTITY
+} from '../../constants/index.js';
 
 import type { TMockServerData } from '../../types/index.js';
 import type { IOfferGenerator } from './offer-generator.interface.js';
