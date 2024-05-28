@@ -30,15 +30,16 @@ export interface CommentEntity extends defaultClasses.Base {}
 export class CommentEntity extends defaultClasses.TimeStamps {
   @prop({
     required: true,
+    type: String,
     minlength: MIN_COMMENT_LENGTH,
     maxlength: MAX_COMMENT_LENGTH
   })
   public text: TComment['text'];
 
-  @prop({ required: true })
+  @prop({ required: true, type: Date })
   public postDate: TComment['postDate'];
 
-  @prop({ required: true, min: MIN_RATING, max: MAX_RATING })
+  @prop({ required: true, min: MIN_RATING, max: MAX_RATING, type: Number })
   public rating: TComment['rating'];
 
   @prop({ required: true, ref: UserEntity })

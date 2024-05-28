@@ -11,6 +11,7 @@ import {
   MIN_PASSWORD_LENGTH,
   MAX_PASSWORD_LENGTH
 } from '../../constants/index.js';
+import { UserType } from '../../enums/index.js';
 
 import type { TUser } from '../../types/index.js';
 
@@ -28,33 +29,34 @@ export interface UserEntity extends defaultClasses.Base {}
 export class UserEntity extends defaultClasses.TimeStamps implements TUser {
   @prop({
     required: true,
-    default: '',
-    min: MIN_USER_NAME_LENGTH,
-    max: MAX_USER_NAME_LENGTH,
+    type: String,
+    minlength: MIN_USER_NAME_LENGTH,
+    maxlength: MAX_USER_NAME_LENGTH,
     trim: true
   })
   public name: TUser['name'];
 
   @prop({
     required: true,
+    type: String,
     unique: true
     // TODO: найти регулярку
     // match: [сюда регулярку, 'Please fill a valid email address']
   })
   public email: TUser['email'];
 
-  @prop({ required: false, default: '' })
+  @prop({ required: false, type: String })
   public avatar: TUser['avatar'];
 
   @prop({
     required: true,
-    default: '',
-    min: MIN_PASSWORD_LENGTH,
-    max: MAX_PASSWORD_LENGTH
+    type: String,
+    minlength: MIN_PASSWORD_LENGTH,
+    maxlength: MAX_PASSWORD_LENGTH
   })
   public password: TUser['password'];
 
-  @prop({ required: true })
+  @prop({ required: true, type: String, enum: UserType })
   public type: TUser['type'];
 
   constructor(userData: TUser) {

@@ -38,7 +38,7 @@ export interface OfferEntity extends defaultClasses.Base {}
 export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({
     required: true,
-    default: '',
+    type: String,
     minlength: MIN_TITLE_LENGTH,
     maxlength: MAX_TITLE_LENGTH,
     trim: true
@@ -47,48 +47,58 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    default: '',
+    type: String,
     minlength: MIN_DESCR_LENGTH,
     maxlength: MAX_DESCR_LENGTH,
     trim: true
   })
   public description: TOffer['description'];
 
-  @prop({ required: true })
+  @prop({ required: true, type: Date })
   public postDate: TOffer['postDate'];
 
-  @prop({ required: true, enum: City })
+  @prop({ required: true, type: String, enum: City })
   public city: TOffer['city'];
 
-  @prop({ required: true })
+  @prop({ required: true, type: String })
   public preview: TOffer['preview'];
 
-  @prop({ required: true })
+  @prop({ required: true, type: () => [String] })
   public photoes: TOffer['photoes'];
 
-  @prop({ required: true, default: false })
+  @prop({ required: true, default: false, type: Boolean })
   public isPremium: TOffer['isPremium'];
 
-  @prop({ required: true, default: false })
+  @prop({ required: true, default: false, type: Boolean })
   public isFavorite: TOffer['isFavorite'];
 
   // TODO: нужно будет удалить, т.к. рейтинг будет считаться на основе комментов
-  @prop({ required: true, min: MIN_RATING, max: MAX_RATING })
+  @prop({ required: true, min: MIN_RATING, max: MAX_RATING, type: Number })
   public rating: TOffer['rating'];
 
-  @prop({ required: true, enum: Housing })
+  @prop({ required: true, enum: Housing, type: String })
   public housing: TOffer['housing'];
 
-  @prop({ required: true, min: MIN_ROOM_QUANTITY, max: MAX_ROOM_QUANTITY })
+  @prop({
+    required: true,
+    min: MIN_ROOM_QUANTITY,
+    max: MAX_ROOM_QUANTITY,
+    type: Number
+  })
   public roomQuantity: TOffer['roomQuantity'];
 
-  @prop({ required: true, min: MIN_GUEST_QUANTITY, max: MAX_GUEST_QUANTITY })
+  @prop({
+    required: true,
+    min: MIN_GUEST_QUANTITY,
+    max: MAX_GUEST_QUANTITY,
+    type: Number
+  })
   public guestQuantity: TOffer['guestQuantity'];
 
-  @prop({ required: true, min: MIN_PRICE, max: MAX_PRICE })
+  @prop({ required: true, min: MIN_PRICE, max: MAX_PRICE, type: Number })
   public rentCost: TOffer['rentCost'];
 
-  @prop({ required: true })
+  @prop({ required: true, type: () => [String] })
   public comforts: TOffer['comforts'];
 
   @prop({ required: true, ref: UserEntity })
