@@ -7,15 +7,15 @@ import type { types } from '@typegoose/typegoose';
 import type { IOfferService } from './offer-service.interface.js';
 
 export function createOfferContainer() {
-  const userContainer = new Container();
-  userContainer
+  const offerContainer = new Container();
+  offerContainer
     .bind<IOfferService>(Component.OfferService)
     .to(DefaultOfferService)
     .inSingletonScope();
 
-  userContainer
+  offerContainer
     .bind<types.ModelType<OfferEntity>>(Component.OfferModel)
     .toConstantValue(OfferModel);
 
-  return userContainer;
+  return offerContainer;
 }
