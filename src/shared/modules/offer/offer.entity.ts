@@ -20,6 +20,7 @@ import {
   MAX_RATING,
   MAX_ROOM_QUANTITY
 } from '../../constants/index.js';
+import { UserEntity } from '../user/user.entity.js';
 
 import type { TOffer, TUser } from '../../types/index.js';
 
@@ -71,6 +72,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({ required: true, default: false })
   public isFavorite: TOffer['isFavorite'];
 
+  // TODO: нужно будет удалить, т.к. рейтинг будет считаться на основе комментов
   @prop({ required: true, min: MIN_RATING, max: MAX_RATING })
   public rating: TOffer['rating'];
 
@@ -89,7 +91,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({ required: true })
   public comforts: TOffer['comforts'];
 
-  @prop({ required: true })
+  @prop({ required: true, ref: UserEntity })
   public userId: Ref<TUser>;
 
   @prop({ required: true })

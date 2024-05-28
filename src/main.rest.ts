@@ -7,13 +7,15 @@ import { createRestApplicationContainer } from './rest/rest.container.js';
 import { createUserContainer } from './shared/modules/user/index.js';
 import { createOfferContainer } from './shared/modules/offer/index.js';
 import { createComfortContainer } from './shared/modules/comfort/index.js';
+import { createCommentContainer } from './shared/modules/comment/index.js';
 
 async function bootstrap() {
   const appContainer = Container.merge(
     createRestApplicationContainer(),
     createUserContainer(),
     createComfortContainer(),
-    createOfferContainer()
+    createOfferContainer(),
+    createCommentContainer()
   );
 
   const application = appContainer.get<RestApplication>(

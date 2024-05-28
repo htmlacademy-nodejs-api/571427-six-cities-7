@@ -7,9 +7,6 @@ export const MAX_DESCR_LENGTH = 1024;
 export const MIN_PRICE = 100;
 export const MAX_PRICE = 100_000;
 
-export const MIN_RATING = 1;
-export const MAX_RATING = 5;
-
 export const MIN_ROOM_QUANTITY = 1;
 export const MAX_ROOM_QUANTITY = 8;
 

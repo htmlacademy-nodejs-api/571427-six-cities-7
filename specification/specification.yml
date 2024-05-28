@@ -323,7 +323,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/comments'
 
-  /comments/create:
     post:
       tags:
         - comments
@@ -494,18 +493,6 @@ components:
         sorting:
           type: string
           example: ASC
-
-        isFavorite:
-          type: boolean
-          example: true
-
-        isPremium:
-          type: boolean
-          example: false
-
-        city:
-          type: string
-          example: Paris
     
     offersCommentsQuery:
       type: object

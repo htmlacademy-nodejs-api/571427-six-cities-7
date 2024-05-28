@@ -1,11 +1,15 @@
 import { inject, injectable } from 'inversify';
 import { OfferEntity } from './offer.entity.js';
 import { Component } from '../../constants/index.js';
+import { UpdateOfferDto } from './dto/update-offer.dto.js';
+import { SortType } from '../../enums/index.js';
+import { DEFAULT_OFFER_COUNT } from './offer.constant.js';
 
 import type { types } from '@typegoose/typegoose';
 import type {
   IOfferService,
-  TDocOfferEntity
+  TDocOfferEntity,
+  TGetListFilter
 } from './offer-service.interface.js';
 import type { ILogger } from '../../libs/logger/index.js';
 import type { TNullable } from '../../types/index.js';
@@ -28,6 +32,89 @@ export class DefaultOfferService implements IOfferService {
   }
 
   async findById(offerId: string): Promise<TNullable<TDocOfferEntity>> {
-    return this.offerModel.findById(offerId).exec();
+    return this.offerModel.findById(offerId).populate(['userId']).exec();
   }
+
+  async getList({
+    limit = DEFAULT_OFFER_COUNT
+  }: Partial<TGetListFilter>): Promise<TDocOfferEntity[]> {
+    return this.offerModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'comments',
+            let: { offerId: '$_id' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$offerId', '$$offerId'] } } },
+              {
+                $group: {
+                  _id: null,
+                  averageRating: { $avg: '$rating' },
+                  commentsCount: { $sum: 1 }
+                }
+              }
+            ],
+            as: 'comments'
+          }
+        },
+        {
+          $addFields: {
+            averageRating: { $arrayElemAt: ['$comments.averageRating', 0] },
+            commentsCount: { $arrayElemAt: ['$comments.commentsCount', 0] }
+          }
+        },
+        {
+          $unset: 'comments'
+        },
+        {
+          $limit: limit
+        }
+      ])
+      .sort({ postDate: SortType.Down })
+      .exec();
+  }
+
+  async deleteById(offerId: string): Promise<TNullable<TDocOfferEntity>> {
+    const result = await this.offerModel.findByIdAndDelete(offerId).exec();
+
+    if (result) {
+      this.logger.info(`Offer deleted. Id: ${offerId}`);
+    }
+
+    return result;
+  }
+
+  async updateById(
+    offerId: string,
+    dto: UpdateOfferDto
+  ): Promise<TNullable<TDocOfferEntity>> {
+    return this.offerModel
+      .findByIdAndUpdate(offerId, dto, { new: true })
+      .populate(['userId'])
+      .exec();
+  }
+
+  async exists(documentId: string): Promise<boolean> {
+    return (await this.offerModel.exists({ _id: documentId })) !== null;
+  }
+
+  async incCommentCount(offerId: string): Promise<TNullable<TDocOfferEntity>> {
+    return this.offerModel
+      .findByIdAndUpdate(offerId, {
+        $inc: {
+          commentCount: 1
+        }
+      })
+      .exec();
+  }
+
+  // TODO: жду авторизацию
+  // async findFavorites(): Promise<TDocOfferEntity[]> {
+  //   return;
+  // }
+
+  // TODO: жду авторизацию
+  // async findPremiumsByCity(): Promise<TDocOfferEntity[]> {
+  //   return;
+  // }
 }
