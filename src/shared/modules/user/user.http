@@ -1,0 +1,27 @@
+# Пользователь
+## Создать пользователя
+
+POST http://localhost:1337/users/register HTTP/1.1
+Content-Type: application/json
+
+{
+   "name": "Джон Уик",
+   "email": "john@continental.com",
+   "avatar": null,
+   "password": "9isdrjf90usd",
+   "type": "pro"
+}
+
+###
+
+## Создать пользователя
+
+POST http://localhost:1337/users/login HTTP/1.1
+Content-Type: application/json
+
+{
+   "email": "john@continental.com",
+   "password": "9isdrjf90usd"
+}
+
+###

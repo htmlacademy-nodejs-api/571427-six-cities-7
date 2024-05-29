@@ -15,7 +15,7 @@ export type TGetListFilter = {
 export interface IOfferService {
   create(dto: CreateOfferDto): Promise<TDocOfferEntity>;
   findById(offerId: string): Promise<TNullable<TDocOfferEntity>>;
-  getList(filter: TGetListFilter): Promise<TDocOfferEntity[]>;
+  getList(filter?: TGetListFilter): Promise<TDocOfferEntity[]>;
   deleteById(offerId: string): Promise<TNullable<TDocOfferEntity>>;
   updateById(
     offerId: string,

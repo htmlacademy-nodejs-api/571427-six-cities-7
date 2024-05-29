@@ -8,8 +8,7 @@ import type { ILogger } from '../../libs/logger/index.js';
 import type {
   ICommentService,
   TDocCommentEntity,
-  TGetListFilter,
-  TGetListProperties
+  TGetListFilter
 } from './comment-service.interface.js';
 import type { CommentEntity } from './comment.entity.js';
 import type { CreateCommentDto } from './dto/create-comment.dto.js';
@@ -18,7 +17,7 @@ import type { CreateCommentDto } from './dto/create-comment.dto.js';
 export class DefaultCommentService implements ICommentService {
   constructor(
     @inject(Component.Logger) private readonly logger: ILogger,
-    @inject(Component.OfferModel)
+    @inject(Component.CommentModel)
     private readonly commentModel: types.ModelType<CommentEntity>
   ) {}
 
@@ -30,17 +29,9 @@ export class DefaultCommentService implements ICommentService {
     return result;
   }
 
-  async getList(
-    { offerId }: TGetListFilter,
-    properties?: Partial<TGetListProperties>
-  ): Promise<TDocCommentEntity[]> {
+  async getList(filter: TGetListFilter): Promise<TDocCommentEntity[]> {
     return this.commentModel
-      .find(
-        { offerId },
-        {},
-        { limit: properties?.limit ?? DEFAULT_COMMENTS_COUNT }
-      )
-      .populate(['userId'])
+      .find({}, {}, { limit: filter?.limit || DEFAULT_COMMENTS_COUNT })
       .sort({ postDate: SortType.Down })
       .exec();
   }

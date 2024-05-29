@@ -7,9 +7,7 @@ import {
 import { createSHA256 } from '../../helpers/index.js';
 import {
   MAX_USER_NAME_LENGTH,
-  MIN_USER_NAME_LENGTH,
-  MIN_PASSWORD_LENGTH,
-  MAX_PASSWORD_LENGTH
+  MIN_USER_NAME_LENGTH
 } from '../../constants/index.js';
 import { UserType } from '../../enums/index.js';
 
@@ -50,9 +48,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements TUser {
 
   @prop({
     required: true,
-    type: String,
-    minlength: MIN_PASSWORD_LENGTH,
-    maxlength: MAX_PASSWORD_LENGTH
+    type: String
   })
   public password: TUser['password'];
 

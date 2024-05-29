@@ -1,0 +1,18 @@
+# Предложения
+## Получить список предложений
+
+GET http://localhost:1337/offers HTTP/1.1
+Content-Type: application/json
+
+###
+
+## Удалить предложение
+
+DELETE  http://localhost:1337/offers HTTP/1.1
+Content-Type: application/json
+
+{
+   "offerId": "6643e21523bd8327437a6fe9"
+}
+
+###

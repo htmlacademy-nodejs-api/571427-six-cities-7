@@ -32,12 +32,12 @@ export class DefaultOfferService implements IOfferService {
   }
 
   async findById(offerId: string): Promise<TNullable<TDocOfferEntity>> {
-    return this.offerModel.findById(offerId).populate(['userId']).exec();
+    return this.offerModel.findById(offerId).exec();
   }
 
   async getList({
     limit = DEFAULT_OFFER_COUNT
-  }: Partial<TGetListFilter>): Promise<TDocOfferEntity[]> {
+  }: Partial<TGetListFilter> = {}): Promise<TDocOfferEntity[]> {
     return this.offerModel
       .aggregate([
         {
@@ -90,7 +90,6 @@ export class DefaultOfferService implements IOfferService {
   ): Promise<TNullable<TDocOfferEntity>> {
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, { new: true })
-      .populate(['userId'])
       .exec();
   }
 
