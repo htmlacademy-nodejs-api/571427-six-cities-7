@@ -20,8 +20,6 @@ export class RestApplication {
     @inject(Component.Config) private readonly config: IConfig<TRestSchema>,
     @inject(Component.DatabaseClient)
     private readonly databaseClient: IDatabaseClient,
-    @inject(Component.CommentController)
-    private readonly commentController: IController,
     @inject(Component.ExceptionFilter)
     private readonly appExceptionFilter: IExceptionFilter,
     @inject(Component.UserController)
@@ -50,7 +48,6 @@ export class RestApplication {
   }
 
   private async initControllers() {
-    this.server.use('/comments', this.commentController.router);
     this.server.use('/users', this.userController.router);
     this.server.use('/offers', this.offerController.router);
   }

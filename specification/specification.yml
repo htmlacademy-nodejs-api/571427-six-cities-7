@@ -12,8 +12,6 @@ tags:
     description: Действия с пользователем
   - name: offers
     description: Действия с объявлениями
-  - name: comments
-    description: Действия с комментариями
 
 paths:
   /users/register:
@@ -238,6 +236,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/comments'
 
+    post:
+      tags:
+        - offers
+      summary: Создаёт комментарий
+      description: Создаёт комментарий к предложению
+
+      requestBody:
+        description: Информация для создания комментария к предложению
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/commentsQuery'
+        required: true
+
+      responses:
+        "201":
+          description: Комментарий создан. Объект комментария
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+
+        "400":
+          description: Переданы не верные данные. Комментарий должен быть от 5 и до 1024 символов. Рейтинг должен быть от 1 до 5
+
+        "401":
+          description: Создание комментария может производить только авторизованный пользователь
+
+        "409":
+          description: Предложение с таким идентификатором отсутствует
+
   /offers/${offerId}/toggle-favorite:
     post:
       tags:
@@ -299,60 +328,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/offers'
-
-  /comments:
-    get:
-      tags:
-        - comments
-      summary: Получает список комментариев
-      description: Получает комментарии к предложению по его идентификатору
-
-      requestBody:
-        description: Информация для получения комментариев к предложению
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/commentsQuery'
-        required: true
-
-      responses:
-        "201":
-          description: Список комментариев
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/comments'
-
-    post:
-      tags:
-        - comments
-      summary: Создаёт комментарий
-      description: Создаёт комментарий к предложению
-
-      requestBody:
-        description: Информация для создания комментария к предложению
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/commentsQuery'
-        required: true
-
-      responses:
-        "201":
-          description: Комментарий создан. Объект комментария
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/comment'
-
-        "400":
-          description: Переданы не верные данные. Комментарий должен быть от 5 и до 1024 символов. Рейтинг должен быть от 1 до 5
-
-        "401":
-          description: Создание комментария может производить только авторизованный пользователь
-
-        "409":
-          description: Предложение с таким идентификатором отсутствует
 
 components:
   schemas:
@@ -416,8 +391,7 @@ components:
           format: date-time
           example: 2022-04-06T08:45:40.283Z
         city:
-          type: string
-          example: Paris
+          $ref: '#/components/schemas/city'
         preview:
           type: string
           example: https://www.youtube.com/watch?v=dQw4w9WgXcQ
@@ -436,7 +410,7 @@ components:
         rentCost:
           type: number
           example: 1337
-        commentCount:
+        commentsCount:
           type: number
           example: 322
 
@@ -448,6 +422,7 @@ components:
     offerDetail:
       allOf:
         - $ref: '#/components/schemas/offer'
+        - $ref: '#/components/schemas/city'
         - type: object
           properties:
             description:
@@ -472,15 +447,6 @@ components:
             userId:
               type: string
               example: 6643e34f81c7dfc04882c0cd
-            coords:
-              type: object
-              properties:
-                lat:
-                  type: number
-                  example: 48.85661
-                lon:
-                  type: number
-                  example: 2.351499
 
     offersQuery:
       type: object
@@ -551,3 +517,23 @@ components:
         offerId:
           type: string
           example: 12345
+
+    city:
+      type: object
+
+      properties:
+        name:
+          type: string
+          example: Paris
+
+        coords:
+          type: object
+
+          properties:
+            lat:
+              type: number
+              example: 48.85661
+
+            lon:
+              type: number
+              example: 2.351499

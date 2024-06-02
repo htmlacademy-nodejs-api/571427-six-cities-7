@@ -2,9 +2,29 @@ import { Expose, Type, Transform } from 'class-transformer';
 import { CityRdo } from '../../city/index.js';
 import { getAverageRating } from '../utils/get-average-rating.js';
 
-export class OfferRdo {
+import type { Comfort } from '../../../enums/index.js';
+
+export class DetailOfferRdo {
   @Expose()
   public title: string;
+
+  @Expose()
+  public description: string;
+
+  @Expose()
+  public photoes: string[];
+
+  @Expose()
+  public roomQuantity: number;
+
+  @Expose()
+  public guestQuantity: number;
+
+  @Expose()
+  public comforts: Comfort[];
+
+  @Expose()
+  public userId: string;
 
   @Expose({ name: 'createdAt' })
   public postDate: Date;

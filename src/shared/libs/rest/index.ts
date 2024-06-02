@@ -8,3 +8,4 @@ export type { IRoute } from './types/route.interface.js';
 export type { IExceptionFilter } from './exception-filter/exception-filter.interface.js';
 export type { TRequestBody } from './types/request-body.type.js';
 export type { TRequestParams } from './types/request.params.type.js';
+export type { TRequest } from './types/request.type.js';

@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { OfferEntity } from './offer.entity.js';
 import { Component } from '../../constants/index.js';
-import { UpdateOfferDto } from './dto/update-offer.dto.js';
+import { UpdateOfferDtoInner } from './dto/update-offer.dto.js';
 import { SortType } from '../../enums/index.js';
 import { DEFAULT_OFFER_COUNT } from './offer.constant.js';
 
@@ -13,7 +13,7 @@ import type {
 } from './offer-service.interface.js';
 import type { ILogger } from '../../libs/logger/index.js';
 import type { TNullable } from '../../types/index.js';
-import type { CreateOfferDto } from './dto/create-offer.dto.js';
+import type { CreateOfferDtoInner } from './dto/create-offer.dto.js';
 
 @injectable()
 export class DefaultOfferService implements IOfferService {
@@ -23,8 +23,12 @@ export class DefaultOfferService implements IOfferService {
     private readonly offerModel: types.ModelType<OfferEntity>
   ) {}
 
-  async create(dto: CreateOfferDto): Promise<TDocOfferEntity> {
-    const result = await this.offerModel.create(dto);
+  async create(dto: CreateOfferDtoInner): Promise<TDocOfferEntity> {
+    const result = await this.offerModel.create({
+      ...dto,
+      commentsCount: 0,
+      sumRating: 0
+    });
 
     this.logger.info(`New offer created: ${dto.title}`);
 
@@ -32,45 +36,17 @@ export class DefaultOfferService implements IOfferService {
   }
 
   async findById(offerId: string): Promise<TNullable<TDocOfferEntity>> {
-    return this.offerModel.findById(offerId).exec();
+    return this.offerModel.findById(offerId).populate('cityId').exec();
   }
 
   async getList({
     limit = DEFAULT_OFFER_COUNT
   }: Partial<TGetListFilter> = {}): Promise<TDocOfferEntity[]> {
     return this.offerModel
-      .aggregate([
-        {
-          $lookup: {
-            from: 'comments',
-            let: { offerId: '$_id' },
-            pipeline: [
-              { $match: { $expr: { $eq: ['$offerId', '$$offerId'] } } },
-              {
-                $group: {
-                  _id: null,
-                  averageRating: { $avg: '$rating' },
-                  commentsCount: { $sum: 1 }
-                }
-              }
-            ],
-            as: 'comments'
-          }
-        },
-        {
-          $addFields: {
-            averageRating: { $arrayElemAt: ['$comments.averageRating', 0] },
-            commentsCount: { $arrayElemAt: ['$comments.commentsCount', 0] }
-          }
-        },
-        {
-          $unset: 'comments'
-        },
-        {
-          $limit: limit
-        }
-      ])
-      .sort({ postDate: SortType.Down })
+      .find()
+      .populate('cityId')
+      .limit(limit)
+      .sort({ createdAt: SortType.Down })
       .exec();
   }
 
@@ -86,7 +62,7 @@ export class DefaultOfferService implements IOfferService {
 
   async updateById(
     offerId: string,
-    dto: UpdateOfferDto
+    dto: UpdateOfferDtoInner
   ): Promise<TNullable<TDocOfferEntity>> {
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, { new: true })
@@ -97,11 +73,15 @@ export class DefaultOfferService implements IOfferService {
     return (await this.offerModel.exists({ _id: documentId })) !== null;
   }
 
-  async incCommentCount(offerId: string): Promise<TNullable<TDocOfferEntity>> {
+  async updateOfferStatistics(
+    offerId: string,
+    rating: number
+  ): Promise<TNullable<TDocOfferEntity>> {
     return this.offerModel
       .findByIdAndUpdate(offerId, {
         $inc: {
-          commentCount: 1
+          commentsCount: 1,
+          sumRating: rating
         }
       })
       .exec();

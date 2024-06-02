@@ -31,7 +31,8 @@ export class DefaultCommentService implements ICommentService {
 
   async getList(filter: TGetListFilter): Promise<TDocCommentEntity[]> {
     return this.commentModel
-      .find({}, {}, { limit: filter?.limit || DEFAULT_COMMENTS_COUNT })
+      .find({ offerId: filter?.offerId })
+      .limit(filter?.limit || DEFAULT_COMMENTS_COUNT)
       .sort({ postDate: SortType.Down })
       .exec();
   }
