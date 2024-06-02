@@ -1,7 +1,11 @@
 import { Container } from 'inversify';
 import { RestApplication } from './rest.application.js';
 import { Component } from '../shared/constants/index.js';
-import { type ILogger, PinoLogger } from '../shared/libs/logger/index.js';
+import {
+  AppExceptionFilter,
+  IExceptionFilter
+} from '../shared/libs/rest/index.js';
+import { PinoLogger, type ILogger } from '../shared/libs/logger/index.js';
 import {
   RestConfig,
   type IConfig,
@@ -30,6 +34,10 @@ export function createRestApplicationContainer() {
   restApplicationContainer
     .bind<IDatabaseClient>(Component.DatabaseClient)
     .to(MongoDatabaseClient)
+    .inSingletonScope();
+  restApplicationContainer
+    .bind<IExceptionFilter>(Component.ExceptionFilter)
+    .to(AppExceptionFilter)
     .inSingletonScope();
 
   return restApplicationContainer;

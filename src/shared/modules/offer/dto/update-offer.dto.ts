@@ -1,19 +1,29 @@
 import type { TOffer } from '../../../types/index.js';
 
-export class UpdateOfferDto {
+export class UpdateOfferDtoInner {
   title?: TOffer['title'];
   description?: TOffer['description'];
-  postDate?: TOffer['postDate'];
-  city?: TOffer['city'];
+  cityId?: string;
   preview?: TOffer['preview'];
   photoes?: TOffer['photoes'];
   isPremium?: TOffer['isPremium'];
-  isFavorite?: TOffer['isFavorite'];
-  rating?: TOffer['rating'];
   housing?: TOffer['housing'];
   roomQuantity?: TOffer['roomQuantity'];
   guestQuantity?: TOffer['guestQuantity'];
   rentCost?: TOffer['rentCost'];
   comforts?: TOffer['comforts'];
-  coords?: TOffer['coords'];
+}
+
+export class UpdateOfferDto {
+  title?: TOffer['title'];
+  description?: TOffer['description'];
+  city?: TOffer['city'];
+  preview?: TOffer['preview'];
+  photoes?: TOffer['photoes'];
+  isPremium?: TOffer['isPremium'];
+  housing?: TOffer['housing'];
+  roomQuantity?: TOffer['roomQuantity'];
+  guestQuantity?: TOffer['guestQuantity'];
+  rentCost?: TOffer['rentCost'];
+  comforts?: TOffer['comforts'];
 }

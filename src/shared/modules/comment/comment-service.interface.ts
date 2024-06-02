@@ -7,17 +7,11 @@ export type TDocCommentEntity = DocumentType<CommentEntity>;
 
 export type TGetListFilter = {
   offerId: string;
-};
-
-export type TGetListProperties = {
   limit: TNullable<number>;
 };
 
 export interface ICommentService {
   create(dto: CreateCommentDto): Promise<TDocCommentEntity>;
-  getList(
-    filter: TGetListFilter,
-    properties: TGetListProperties
-  ): Promise<TDocCommentEntity[]>;
+  getList(filter?: Partial<TGetListFilter>): Promise<TDocCommentEntity[]>;
   deleteByOfferId(offerId: string): Promise<number>;
 }

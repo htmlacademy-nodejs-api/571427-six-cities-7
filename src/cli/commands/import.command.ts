@@ -22,6 +22,11 @@ import {
   ComfortModel,
   type IComfortService
 } from '../../shared/modules/comfort/index.js';
+import {
+  CityModel,
+  DefaultCityService,
+  type ICityService
+} from '../../shared/modules/city/index.js';
 
 import type { ILogger } from '../../shared/libs/logger/index.js';
 import type { TOffer } from '../../shared/types/offer.type.js';
@@ -33,6 +38,7 @@ export class ImportCommand implements ICommand {
   private offerService: IOfferService;
   private databaseClient: IDatabaseClient;
   private comfortService: IComfortService;
+  private cityService: ICityService;
   private logger: ILogger;
   private salt: string;
 
@@ -41,6 +47,7 @@ export class ImportCommand implements ICommand {
     this.offerService = new DefaultOfferService(this.logger, OfferModel);
     this.userService = new DefaultUserService(this.logger, UserModel);
     this.comfortService = new DefaultComfortService(this.logger, ComfortModel);
+    this.cityService = new DefaultCityService(this.logger, CityModel);
     this.databaseClient = new MongoDatabaseClient(this.logger);
   }
 
@@ -66,23 +73,24 @@ export class ImportCommand implements ICommand {
       comforts.push(existComfort.id);
     }
 
+    const existCity = await this.cityService.findByCityNameOrCreate(
+      offer.city,
+      { name: offer.city }
+    );
+
     await this.offerService.create({
       title: offer.title,
       description: offer.description,
-      postDate: offer.postDate,
-      city: offer.city,
+      cityId: existCity.id,
       preview: offer.preview,
       photoes: offer.photoes,
       isPremium: offer.isPremium,
-      isFavorite: offer.isFavorite,
-      rating: offer.rating,
       housing: offer.housing,
       roomQuantity: offer.roomQuantity,
       guestQuantity: offer.guestQuantity,
       rentCost: offer.rentCost,
       comforts,
-      userId: user.id,
-      coords: offer.coords
+      userId: user.id
     });
   }
 

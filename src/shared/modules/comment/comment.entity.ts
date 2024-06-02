@@ -36,9 +36,6 @@ export class CommentEntity extends defaultClasses.TimeStamps {
   })
   public text: TComment['text'];
 
-  @prop({ required: true, type: Date })
-  public postDate: TComment['postDate'];
-
   @prop({ required: true, min: MIN_RATING, max: MAX_RATING, type: Number })
   public rating: TComment['rating'];
 
