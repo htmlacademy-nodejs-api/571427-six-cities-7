@@ -9,7 +9,8 @@ import type { types } from '@typegoose/typegoose';
 import type {
   IOfferService,
   TDocOfferEntity,
-  TGetListFilter
+  TGetListFilter,
+  TInnerGetListFilter
 } from './offer-service.interface.js';
 import type { ILogger } from '../../libs/logger/index.js';
 import type { TNullable } from '../../types/index.js';
@@ -42,11 +43,23 @@ export class DefaultOfferService implements IOfferService {
   async getList({
     limit = DEFAULT_OFFER_COUNT
   }: Partial<TGetListFilter> = {}): Promise<TDocOfferEntity[]> {
+    return this._getList({ limit });
+  }
+
+  async findPremiumsByCityId(cityId: string): Promise<TDocOfferEntity[]> {
+    return this._getList({ limit: 3, filter: { cityId, isPremium: true } });
+  }
+
+  private async _getList({
+    filter = {},
+    limit = DEFAULT_OFFER_COUNT,
+    sorting = { createdAt: SortType.Down }
+  }: Partial<TInnerGetListFilter>): Promise<TDocOfferEntity[]> {
     return this.offerModel
-      .find()
+      .find(filter)
       .populate('cityId')
       .limit(limit)
-      .sort({ createdAt: SortType.Down })
+      .sort(sorting)
       .exec();
   }
 
@@ -89,11 +102,6 @@ export class DefaultOfferService implements IOfferService {
 
   // TODO: жду авторизацию
   // async findFavorites(): Promise<TDocOfferEntity[]> {
-  //   return;
-  // }
-
-  // TODO: жду авторизацию
-  // async findPremiumsByCity(): Promise<TDocOfferEntity[]> {
   //   return;
   // }
 }

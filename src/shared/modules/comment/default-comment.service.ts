@@ -11,7 +11,7 @@ import type {
   TGetListFilter
 } from './comment-service.interface.js';
 import type { CommentEntity } from './comment.entity.js';
-import type { CreateCommentDto } from './dto/create-comment.dto.js';
+import type { CreateCommentDtoInner } from './dto/create-comment.dto.js';
 
 @injectable()
 export class DefaultCommentService implements ICommentService {
@@ -21,7 +21,7 @@ export class DefaultCommentService implements ICommentService {
     private readonly commentModel: types.ModelType<CommentEntity>
   ) {}
 
-  async create(dto: CreateCommentDto): Promise<TDocCommentEntity> {
+  async create(dto: CreateCommentDtoInner): Promise<TDocCommentEntity> {
     const result = await this.commentModel.create(dto);
 
     this.logger.info(`New comment with rating ${dto.rating} created`);

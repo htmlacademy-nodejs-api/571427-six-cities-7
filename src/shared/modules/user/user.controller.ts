@@ -32,6 +32,7 @@ export class UserController extends BaseController {
       method: HttpMethod.Post,
       handler: this.create
     });
+
     this.addRoute({
       path: '/login',
       method: HttpMethod.Post,
