@@ -6,9 +6,9 @@ POST http://localhost:1337/offers HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "СASIDUOHFHDIUASDHFUIDSAHUFI6",
+  "title": "Супер тестовое предлож21231231ение666",
   "description": "Супер тестовое предло321213231жение описание",
-  "city": "SPb",
+  "city": "Paris",
   "preview": "preview.jpg",
   "photoes": ["preview1.jpg", "preview2.jpg", "preview2.jpg", "preview3.jpg"],
   "isPremium": true,

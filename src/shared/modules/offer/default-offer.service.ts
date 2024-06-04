@@ -3,7 +3,10 @@ import { OfferEntity } from './offer.entity.js';
 import { Component } from '../../constants/index.js';
 import { UpdateOfferDtoInner } from './dto/update-offer.dto.js';
 import { SortType } from '../../enums/index.js';
-import { DEFAULT_OFFER_COUNT } from './offer.constant.js';
+import {
+  DEFAULT_OFFER_COUNT,
+  DEFAULT_PREMIUM_OFFER_COUNT
+} from './offer.constant.js';
 
 import type { types } from '@typegoose/typegoose';
 import type {
@@ -47,7 +50,10 @@ export class DefaultOfferService implements IOfferService {
   }
 
   async findPremiumsByCityId(cityId: string): Promise<TDocOfferEntity[]> {
-    return this._getList({ limit: 3, filter: { cityId, isPremium: true } });
+    return this._getList({
+      limit: DEFAULT_PREMIUM_OFFER_COUNT,
+      filter: { cityId, isPremium: true }
+    });
   }
 
   private async _getList({
