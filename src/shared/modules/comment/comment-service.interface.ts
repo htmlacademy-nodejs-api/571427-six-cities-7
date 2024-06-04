@@ -1,4 +1,4 @@
-import type { CreateCommentDto } from './dto/create-comment.dto.js';
+import type { CreateCommentDtoInner } from './dto/create-comment.dto.js';
 import type { CommentEntity } from './comment.entity.js';
 import type { DocumentType } from '@typegoose/typegoose';
 import type { TNullable } from '../../types/index.js';
@@ -11,7 +11,7 @@ export type TGetListFilter = {
 };
 
 export interface ICommentService {
-  create(dto: CreateCommentDto): Promise<TDocCommentEntity>;
+  create(dto: CreateCommentDtoInner): Promise<TDocCommentEntity>;
   getList(filter?: Partial<TGetListFilter>): Promise<TDocCommentEntity[]>;
   deleteByOfferId(offerId: string): Promise<number>;
 }

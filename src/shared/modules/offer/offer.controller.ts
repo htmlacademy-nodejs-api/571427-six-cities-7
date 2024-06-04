@@ -3,6 +3,9 @@ import { Component } from '../../constants/index.js';
 import {
   BaseController,
   HttpMethod,
+  ValidateDtoMiddleware,
+  ValidateObjectExistMiddleware,
+  ValidateObjectIdMiddleware,
   type TRequest
 } from '../../libs/rest/index.js';
 import { fillDTO } from '../../helpers/index.js';
@@ -10,7 +13,7 @@ import { OfferRdo } from './rdo/offer.rdo.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import {
   CommentRdo,
-  type CreateCommentDto,
+  CreateCommentDto,
   type ICommentService
 } from '../comment/index.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
@@ -20,7 +23,12 @@ import type { Request, Response } from 'express';
 import type { ILogger } from '../../libs/logger/index.js';
 import type { IOfferService } from './offer-service.interface.js';
 import type { RemoveOfferDto } from './dto/remove-offer.dto.js';
-import type { ICityService, TDocCityEntity } from '../city/index.js';
+import type {
+  CityEntity,
+  ICityService,
+  TDocCityEntity
+} from '../city/index.js';
+import type { types } from '@typegoose/typegoose';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -31,7 +39,9 @@ export class OfferController extends BaseController {
     @inject(Component.CommentService)
     private readonly commentService: ICommentService,
     @inject(Component.CityService)
-    private readonly cityService: ICityService
+    private readonly cityService: ICityService,
+    @inject(Component.CityModel)
+    private readonly cityModel: types.ModelType<CityEntity>
   ) {
     super(logger);
 
@@ -46,37 +56,58 @@ export class OfferController extends BaseController {
     this.addRoute({
       path: '/',
       method: HttpMethod.Post,
-      handler: this.create
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateOfferDto)]
+    });
+
+    this.addRoute({
+      path: '/premiums',
+      method: HttpMethod.Get,
+      handler: this.indexPremiums,
+      middlewares: [
+        new ValidateObjectExistMiddleware('name', 'city', this.cityModel)
+      ]
     });
 
     this.addRoute({
       path: '/:offerId',
       method: HttpMethod.Delete,
-      handler: this.delete
+      handler: this.delete,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')]
+    });
+
+    this.addRoute({
+      path: '/:offerId',
+      method: HttpMethod.Get,
+      handler: this.show,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')]
     });
 
     this.addRoute({
       path: '/:offerId',
       method: HttpMethod.Patch,
-      handler: this.update
-    });
-
-    this.addRoute({
-      path: '/:offerId',
-      method: HttpMethod.Get,
-      handler: this.findById
+      handler: this.update,
+      middlewares: [
+        new ValidateDtoMiddleware(UpdateOfferDto),
+        new ValidateObjectIdMiddleware('offerId')
+      ]
     });
 
     this.addRoute({
       path: '/:offerId/comments',
       method: HttpMethod.Post,
-      handler: this.createComment
+      handler: this.createComment,
+      middlewares: [
+        new ValidateDtoMiddleware(CreateCommentDto),
+        new ValidateObjectIdMiddleware('offerId')
+      ]
     });
 
     this.addRoute({
       path: '/:offerId/comments',
       method: HttpMethod.Get,
-      handler: this.indexComment
+      handler: this.indexComment,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')]
     });
   }
 
@@ -163,7 +194,7 @@ export class OfferController extends BaseController {
     this.ok(res, comment);
   }
 
-  async findById(
+  async show(
     { params }: TRequest<CreateCommentDto>,
     res: Response
   ): Promise<void> {
@@ -171,6 +202,17 @@ export class OfferController extends BaseController {
       params.offerId as string
     );
     const responseData = fillDTO(DetailOfferRdo, detailsOffer);
+    this.ok(res, responseData);
+  }
+
+  async indexPremiums(req: TRequest, res: Response): Promise<void> {
+    const cityObj = await this.cityService.findByCityName(
+      req.query.city as string
+    );
+
+    const offers = await this.offerService.findPremiumsByCityId(cityObj!.id);
+
+    const responseData = fillDTO(OfferRdo, offers);
     this.ok(res, responseData);
   }
 }
