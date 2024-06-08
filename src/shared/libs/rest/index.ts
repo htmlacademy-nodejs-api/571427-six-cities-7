@@ -5,6 +5,7 @@ export { HttpError } from './errors/index.js';
 export { ValidateObjectIdMiddleware } from './middleware/validate-objectid.middleware.js';
 export { ValidateDtoMiddleware } from './middleware/validate-dto.middleware.js';
 export { ValidateObjectExistMiddleware } from './middleware/validate-object-exist.middleware.js';
+export { UploadFileMiddleware } from './middleware/upload-file.middleware.js';
 
 export type { IController } from './controller/controller.interface.js';
 export type { IRoute } from './types/route.interface.js';

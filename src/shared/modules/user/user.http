@@ -25,3 +25,17 @@ Content-Type: application/json
 }
 
 ###
+
+## Загрузить аватар
+
+POST http://localhost:1337/users/6643e34f81c7dfc04882c0cd/avatar HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="avatar"; filename="screen.png"
+Content-Type: image/png
+
+< C:\Path\To\Image
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
