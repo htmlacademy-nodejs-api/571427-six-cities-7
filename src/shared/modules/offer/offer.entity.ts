@@ -18,7 +18,7 @@ import {
   MAX_PRICE,
   MAX_ROOM_QUANTITY
 } from '../../constants/index.js';
-import { UserEntity } from '../user/user.entity.js';
+import { UserEntity } from '../user/index.js';
 import { CityEntity } from '../city/index.js';
 
 import type { TOffer, TUser, TCity } from '../../types/index.js';

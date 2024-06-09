@@ -480,6 +480,10 @@ components:
       type: object
 
       properties:
+        offerId:
+          type: string
+          example: 665c68b8c9fc33831326961e
+
         isFavorite:
           type: boolean
           example: true

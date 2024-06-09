@@ -5,8 +5,8 @@ import {
   modelOptions,
   Ref
 } from '@typegoose/typegoose';
-import { UserEntity } from '../user/user.entity.js';
-import { OfferEntity } from '../offer/offer.entity.js';
+import { UserEntity } from '../user/index.js';
+import { OfferEntity } from '../offer/index.js';
 import {
   MAX_COMMENT_LENGTH,
   MAX_RATING,

@@ -2,14 +2,15 @@ import { inject, injectable } from 'inversify';
 import { Component } from '../shared/constants/index.js';
 import { getMongoURI } from '../shared/helpers/database.js';
 import express, { Express } from 'express';
+import {
+  ParseTokenMiddleware,
+  type IController,
+  type IExceptionFilter
+} from '../shared/libs/rest/index.js';
 
 import type { ILogger } from '../shared/libs/logger/index.js';
 import type { IConfig, TRestSchema } from '../shared/libs/config/index.js';
 import type { IDatabaseClient } from '../shared/libs/database-client/database-client.interface.js';
-import type {
-  IController,
-  IExceptionFilter
-} from '../shared/libs/rest/index.js';
 
 @injectable()
 export class RestApplication {
@@ -25,7 +26,9 @@ export class RestApplication {
     @inject(Component.UserController)
     private readonly userController: IController,
     @inject(Component.OfferController)
-    private readonly offerController: IController
+    private readonly offerController: IController,
+    @inject(Component.AuthExceptionFilter)
+    private readonly authExceptionFilter: IExceptionFilter
   ) {
     this.server = express();
   }
@@ -52,15 +55,26 @@ export class RestApplication {
     this.server.use('/offers', this.offerController.router);
   }
 
-  private async initMiddleware() {
+  private async initMiddlewares() {
+    const authenticateMiddleware = new ParseTokenMiddleware(
+      this.config.get('JWT_SECRET')
+    );
+
     this.server.use(express.json());
     this.server.use(
       '/upload',
       express.static(this.config.get('UPLOAD_DIRECTORY'))
     );
+
+    this.server.use(
+      authenticateMiddleware.execute.bind(authenticateMiddleware)
+    );
   }
 
   private async initExceptionFilters() {
+    this.server.use(
+      this.authExceptionFilter.catch.bind(this.authExceptionFilter)
+    );
     this.server.use(
       this.appExceptionFilter.catch.bind(this.appExceptionFilter)
     );
@@ -75,7 +89,7 @@ export class RestApplication {
     this.logger.info('Init database completed');
 
     this.logger.info('Init app-level middleware');
-    await this.initMiddleware();
+    await this.initMiddlewares();
     this.logger.info('App-level middleware initialization completed');
 
     this.logger.info('Init controllers');
