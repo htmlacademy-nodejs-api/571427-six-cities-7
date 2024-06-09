@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { HttpError } from '../errors/index.js';
-import { HttpMethod } from '../types/http-method.enum.js';
+import { getValue } from './utils/get-value.js';
 
 import type { NextFunction, Request, Response } from 'express';
 import type { IMiddleware } from './middleware.interface.js';
@@ -25,7 +25,7 @@ export class ValidateObjectExistMiddleware implements IMiddleware {
     _res: Response,
     next: NextFunction
   ): Promise<void> {
-    const value = this.getValue(req);
+    const value = getValue(req, this.queryFieldName);
 
     const item = await this.model
       .findOne({
@@ -42,16 +42,5 @@ export class ValidateObjectExistMiddleware implements IMiddleware {
       `There is no object named '${value}'`,
       'ValidateObjectExistMiddleware'
     );
-  }
-
-  private getValue(req: Request) {
-    switch (req.method.toLocaleLowerCase()) {
-      case HttpMethod.Get:
-        return req.query[this.queryFieldName];
-      case HttpMethod.Post:
-        return req.params[this.queryFieldName];
-      default:
-        return req.params[this.queryFieldName];
-    }
   }
 }

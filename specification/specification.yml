@@ -267,7 +267,7 @@ paths:
         "409":
           description: Предложение с таким идентификатором отсутствует
 
-  /offers/${offerId}/toggle-favorite:
+  /offers/favorites:
     post:
       tags:
         - offers
@@ -289,7 +289,6 @@ paths:
         "401":
           description: Нужно авторизоваться
 
-  /offers/favorites:
     get:
       tags:
         - offers

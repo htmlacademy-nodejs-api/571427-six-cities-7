@@ -86,6 +86,8 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   })
   public guestQuantity: TOffer['guestQuantity'];
 
+  public isFavorite: boolean;
+
   @prop({ min: MIN_PRICE, max: MAX_PRICE, type: Number })
   public rentCost: TOffer['rentCost'];
 

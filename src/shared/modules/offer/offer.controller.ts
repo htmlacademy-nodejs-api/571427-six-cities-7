@@ -7,6 +7,7 @@ import {
   ValidateObjectExistMiddleware,
   ValidateObjectIdMiddleware,
   PrivateRouteMiddleware,
+  ValidateAuthorMiddleware,
   type TRequest
 } from '../../libs/rest/index.js';
 import { fillDTO } from '../../helpers/index.js';
@@ -22,7 +23,10 @@ import { DetailOfferRdo } from './rdo/detail-offer.rdo.js';
 
 import type { Request, Response } from 'express';
 import type { ILogger } from '../../libs/logger/index.js';
-import type { IOfferService } from './offer-service.interface.js';
+import type {
+  IOfferService,
+  TDocOfferEntity
+} from './offer-service.interface.js';
 import type { RemoveOfferDto } from './dto/remove-offer.dto.js';
 import type {
   CityEntity,
@@ -31,6 +35,8 @@ import type {
 } from '../city/index.js';
 import type { types } from '@typegoose/typegoose';
 import type { IFavService, TToggleFav } from '../favorite/index.js';
+import type { TNullable } from '../../types/index.js';
+import type { TTokenPayload } from '../auth/index.js';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -84,7 +90,7 @@ export class OfferController extends BaseController {
     });
 
     this.addRoute({
-      path: '/toggle-favorite',
+      path: '/favorites',
       method: HttpMethod.Post,
       handler: this.toggleFavorite,
       middlewares: [new PrivateRouteMiddleware()]
@@ -113,6 +119,7 @@ export class OfferController extends BaseController {
       handler: this.update,
       middlewares: [
         new PrivateRouteMiddleware(),
+        new ValidateAuthorMiddleware('offerId', this.offerService),
         new ValidateDtoMiddleware(UpdateOfferDto),
         new ValidateObjectIdMiddleware('offerId')
       ]
@@ -137,10 +144,35 @@ export class OfferController extends BaseController {
     });
   }
 
-  async index(_req: Request, res: Response): Promise<void> {
+  async index({ tokenPayload }: Request, res: Response): Promise<void> {
     const offers = await this.offerService.getList();
-    const responseData = fillDTO(OfferRdo, offers);
+
+    const filledOffers = await this.fillOfferFavStatus(
+      offers,
+      tokenPayload?.id || null
+    );
+
+    const responseData = fillDTO(OfferRdo, filledOffers);
     this.ok(res, responseData);
+  }
+
+  async fillOfferFavStatus(
+    offers: TDocOfferEntity[],
+    userId: TNullable<TTokenPayload['id']>
+  ): Promise<TDocOfferEntity[]> {
+    if (!offers) {
+      return offers;
+    }
+
+    const favObj = userId
+      ? await this.favoriteService.findByUserId(userId)
+      : null;
+
+    return offers.map((offer) => {
+      offer.isFavorite = Boolean(favObj?.offerIds.includes(offer.id));
+
+      return offer;
+    });
   }
 
   async delete(req: TRequest<RemoveOfferDto>, res: Response): Promise<void> {
@@ -238,24 +270,35 @@ export class OfferController extends BaseController {
   }
 
   async show(
-    { params }: TRequest<CreateCommentDto>,
+    { params, tokenPayload }: TRequest<CreateCommentDto>,
     res: Response
   ): Promise<void> {
     const detailsOffer = await this.offerService.findById(
       params.offerId as string
     );
-    const responseData = fillDTO(DetailOfferRdo, detailsOffer);
+
+    const filledOffers = detailsOffer
+      ? await this.fillOfferFavStatus([detailsOffer], tokenPayload?.id || null)
+      : [null];
+
+    const responseData = fillDTO(DetailOfferRdo, filledOffers[0]);
     this.ok(res, responseData);
   }
 
-  async indexPremiums(req: TRequest, res: Response): Promise<void> {
-    const cityObj = await this.cityService.findByCityName(
-      req.query.city as string
-    );
+  async indexPremiums(
+    { query, tokenPayload }: TRequest,
+    res: Response
+  ): Promise<void> {
+    const cityObj = await this.cityService.findByCityName(query.city as string);
 
     const offers = await this.offerService.findPremiumsByCityId(cityObj!.id);
 
-    const responseData = fillDTO(OfferRdo, offers);
+    const filledOffers = await this.fillOfferFavStatus(
+      offers,
+      tokenPayload?.id || null
+    );
+
+    const responseData = fillDTO(OfferRdo, filledOffers);
     this.ok(res, responseData);
   }
 
@@ -273,7 +316,11 @@ export class OfferController extends BaseController {
 
     const offers = await this.offerService.getByOfferIds(offerIds);
 
-    const responseData = fillDTO(OfferRdo, offers);
+    const filledOffers = offers
+      ? await this.fillOfferFavStatus(offers, tokenPayload?.id || null)
+      : false;
+
+    const responseData = fillDTO(OfferRdo, filledOffers);
     this.ok(res, responseData);
   }
 }

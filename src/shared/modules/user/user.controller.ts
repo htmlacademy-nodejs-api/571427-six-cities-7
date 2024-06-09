@@ -5,7 +5,8 @@ import {
   HttpError,
   UploadFileMiddleware,
   ValidateObjectIdMiddleware,
-  PrivateRouteMiddleware
+  PrivateRouteMiddleware,
+  LoginRouteMiddleware
 } from '../../libs/rest/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { Component } from '../../constants/index.js';
@@ -36,13 +37,15 @@ export class UserController extends BaseController {
     this.addRoute({
       path: '/register',
       method: HttpMethod.Post,
-      handler: this.create
+      handler: this.create,
+      middlewares: [new LoginRouteMiddleware()]
     });
 
     this.addRoute({
       path: '/login',
       method: HttpMethod.Post,
-      handler: this.login
+      handler: this.login,
+      middlewares: [new LoginRouteMiddleware()]
     });
 
     this.addRoute({

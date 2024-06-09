@@ -8,6 +8,8 @@ export { ValidateObjectExistMiddleware } from './middleware/validate-object-exis
 export { UploadFileMiddleware } from './middleware/upload-file.middleware.js';
 export { ParseTokenMiddleware } from './middleware/parse-token.middleware.js';
 export { PrivateRouteMiddleware } from './middleware/private-route.middleware.js';
+export { LoginRouteMiddleware } from './middleware/login-route.middleware.js';
+export { ValidateAuthorMiddleware } from './middleware/validate-author.middleware.js';
 
 export type { IController } from './controller/controller.interface.js';
 export type { IRoute } from './types/route.interface.js';
