@@ -4,12 +4,15 @@ import {
   HttpMethod,
   HttpError,
   UploadFileMiddleware,
-  ValidateObjectIdMiddleware
+  ValidateObjectIdMiddleware,
+  PrivateRouteMiddleware,
+  LoginRouteMiddleware
 } from '../../libs/rest/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { Component } from '../../constants/index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { UserRdo } from './rdo/user.rdo.js';
+import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
 
 import type { IConfig, TRestSchema } from '../../libs/config/index.js';
 import type { IUserService } from './user-service.interface.js';
@@ -17,6 +20,7 @@ import type { Request, Response } from 'express';
 import type { ILogger } from '../../libs/logger/index.js';
 import type { TCreateUserRequest } from './create-user-request.type.js';
 import type { TLoginUserRequest } from './login-user-request.type.js';
+import type { IAuthService } from '../auth/index.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -24,7 +28,8 @@ export class UserController extends BaseController {
     @inject(Component.Logger) protected readonly logger: ILogger,
     @inject(Component.UserService) private readonly userService: IUserService,
     @inject(Component.Config)
-    private readonly configService: IConfig<TRestSchema>
+    private readonly configService: IConfig<TRestSchema>,
+    @inject(Component.AuthService) private readonly authService: IAuthService
   ) {
     super(logger);
     this.logger.info('Register routes for UserController…');
@@ -32,13 +37,22 @@ export class UserController extends BaseController {
     this.addRoute({
       path: '/register',
       method: HttpMethod.Post,
-      handler: this.create
+      handler: this.create,
+      middlewares: [new LoginRouteMiddleware()]
     });
 
     this.addRoute({
       path: '/login',
       method: HttpMethod.Post,
-      handler: this.login
+      handler: this.login,
+      middlewares: [new LoginRouteMiddleware()]
+    });
+
+    this.addRoute({
+      path: '/login',
+      method: HttpMethod.Get,
+      handler: this.checkAuthenticate,
+      middlewares: [new PrivateRouteMiddleware()]
     });
 
     this.addRoute({
@@ -46,6 +60,7 @@ export class UserController extends BaseController {
       method: HttpMethod.Post,
       handler: this.uploadAvatar,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('userId'),
         new UploadFileMiddleware(
           this.configService.get('UPLOAD_DIRECTORY'),
@@ -73,22 +88,31 @@ export class UserController extends BaseController {
     this.created(res, fillDTO(UserRdo, result));
   }
 
-  async login({ body }: TLoginUserRequest, _res: Response): Promise<void> {
-    const existsUser = await this.userService.findByEmail(body.email);
+  async login({ body }: TLoginUserRequest, res: Response): Promise<void> {
+    const user = await this.authService.verify(body);
+    const token = await this.authService.authenticate(user);
 
-    if (!existsUser) {
+    const responseData = fillDTO(LoggedUserRdo, {
+      email: user.email,
+      name: user.name,
+      token
+    });
+
+    this.ok(res, responseData);
+  }
+
+  async checkAuthenticate({ tokenPayload: { email } }: Request, res: Response) {
+    const foundedUser = await this.userService.findByEmail(email);
+
+    if (!foundedUser) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
-        `User with email ${body.email} not found.`,
+        'Unauthorized',
         'UserController'
       );
     }
 
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController'
-    );
+    this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
   }
 
   async uploadAvatar(req: Request, res: Response) {

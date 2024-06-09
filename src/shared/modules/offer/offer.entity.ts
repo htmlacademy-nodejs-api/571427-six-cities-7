@@ -18,7 +18,7 @@ import {
   MAX_PRICE,
   MAX_ROOM_QUANTITY
 } from '../../constants/index.js';
-import { UserEntity } from '../user/user.entity.js';
+import { UserEntity } from '../user/index.js';
 import { CityEntity } from '../city/index.js';
 
 import type { TOffer, TUser, TCity } from '../../types/index.js';
@@ -85,6 +85,8 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     type: Number
   })
   public guestQuantity: TOffer['guestQuantity'];
+
+  public isFavorite: boolean;
 
   @prop({ min: MIN_PRICE, max: MAX_PRICE, type: Number })
   public rentCost: TOffer['rentCost'];

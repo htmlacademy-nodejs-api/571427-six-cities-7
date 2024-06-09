@@ -36,5 +36,5 @@ export interface IOfferService {
   ): Promise<TNullable<TDocOfferEntity>>;
   exists(offerId: string): Promise<boolean>;
   findPremiumsByCityId(cityId: string): Promise<TDocOfferEntity[]>;
-  // findFavorites(): Promise<TDocOfferEntity[]>;
+  getByOfferIds(offerIds: string[]): Promise<TDocOfferEntity[] | false>;
 }

@@ -6,6 +6,8 @@ import {
   ValidateDtoMiddleware,
   ValidateObjectExistMiddleware,
   ValidateObjectIdMiddleware,
+  PrivateRouteMiddleware,
+  ValidateAuthorMiddleware,
   type TRequest
 } from '../../libs/rest/index.js';
 import { fillDTO } from '../../helpers/index.js';
@@ -21,7 +23,10 @@ import { DetailOfferRdo } from './rdo/detail-offer.rdo.js';
 
 import type { Request, Response } from 'express';
 import type { ILogger } from '../../libs/logger/index.js';
-import type { IOfferService } from './offer-service.interface.js';
+import type {
+  IOfferService,
+  TDocOfferEntity
+} from './offer-service.interface.js';
 import type { RemoveOfferDto } from './dto/remove-offer.dto.js';
 import type {
   CityEntity,
@@ -29,6 +34,9 @@ import type {
   TDocCityEntity
 } from '../city/index.js';
 import type { types } from '@typegoose/typegoose';
+import type { IFavService, TToggleFav } from '../favorite/index.js';
+import type { TNullable } from '../../types/index.js';
+import type { TTokenPayload } from '../auth/index.js';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -41,7 +49,9 @@ export class OfferController extends BaseController {
     @inject(Component.CityService)
     private readonly cityService: ICityService,
     @inject(Component.CityModel)
-    private readonly cityModel: types.ModelType<CityEntity>
+    private readonly cityModel: types.ModelType<CityEntity>,
+    @inject(Component.FavoriteService)
+    private readonly favoriteService: IFavService
   ) {
     super(logger);
 
@@ -57,7 +67,10 @@ export class OfferController extends BaseController {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateOfferDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateOfferDto)
+      ]
     });
 
     this.addRoute({
@@ -70,10 +83,27 @@ export class OfferController extends BaseController {
     });
 
     this.addRoute({
+      path: '/favorites',
+      method: HttpMethod.Get,
+      handler: this.indexFavorites,
+      middlewares: [new PrivateRouteMiddleware()]
+    });
+
+    this.addRoute({
+      path: '/favorites',
+      method: HttpMethod.Post,
+      handler: this.toggleFavorite,
+      middlewares: [new PrivateRouteMiddleware()]
+    });
+
+    this.addRoute({
       path: '/:offerId',
       method: HttpMethod.Delete,
       handler: this.delete,
-      middlewares: [new ValidateObjectIdMiddleware('offerId')]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('offerId')
+      ]
     });
 
     this.addRoute({
@@ -88,6 +118,8 @@ export class OfferController extends BaseController {
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateAuthorMiddleware('offerId', this.offerService),
         new ValidateDtoMiddleware(UpdateOfferDto),
         new ValidateObjectIdMiddleware('offerId')
       ]
@@ -98,6 +130,7 @@ export class OfferController extends BaseController {
       method: HttpMethod.Post,
       handler: this.createComment,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateDtoMiddleware(CreateCommentDto),
         new ValidateObjectIdMiddleware('offerId')
       ]
@@ -111,10 +144,35 @@ export class OfferController extends BaseController {
     });
   }
 
-  async index(_req: Request, res: Response): Promise<void> {
+  async index({ tokenPayload }: Request, res: Response): Promise<void> {
     const offers = await this.offerService.getList();
-    const responseData = fillDTO(OfferRdo, offers);
+
+    const filledOffers = await this.fillOfferFavStatus(
+      offers,
+      tokenPayload?.id || null
+    );
+
+    const responseData = fillDTO(OfferRdo, filledOffers);
     this.ok(res, responseData);
+  }
+
+  async fillOfferFavStatus(
+    offers: TDocOfferEntity[],
+    userId: TNullable<TTokenPayload['id']>
+  ): Promise<TDocOfferEntity[]> {
+    if (!offers) {
+      return offers;
+    }
+
+    const favObj = userId
+      ? await this.favoriteService.findByUserId(userId)
+      : null;
+
+    return offers.map((offer) => {
+      offer.isFavorite = Boolean(favObj?.offerIds.includes(offer.id));
+
+      return offer;
+    });
   }
 
   async delete(req: TRequest<RemoveOfferDto>, res: Response): Promise<void> {
@@ -127,7 +185,7 @@ export class OfferController extends BaseController {
   }
 
   async create(
-    { body }: TRequest<CreateOfferDto>,
+    { body, tokenPayload }: TRequest<CreateOfferDto>,
     res: Response
   ): Promise<void> {
     const { city, ...updateData } = body;
@@ -138,7 +196,8 @@ export class OfferController extends BaseController {
 
     const result = await this.offerService.create({
       ...updateData,
-      cityId: cityObj.id
+      cityId: cityObj.id,
+      userId: tokenPayload.id
     });
 
     this.ok(res, result);
@@ -175,18 +234,34 @@ export class OfferController extends BaseController {
     this.ok(res, responseData);
   }
 
-  async createComment(
-    req: TRequest<CreateCommentDto>,
+  async toggleFavorite(
+    { body, tokenPayload }: Request,
     res: Response
   ): Promise<void> {
-    const offerId = req.params.offerId as string;
-    const rating = req.body.rating;
+    const options: TToggleFav = {
+      userId: tokenPayload.id,
+      offerId: body.offerId
+    };
+
+    const result = body.isFavorite
+      ? await this.favoriteService.addToFavorites(options)
+      : await this.favoriteService.removeFromFavorites(options);
+
+    this.ok(res, result);
+  }
+
+  async createComment(
+    { params, body, tokenPayload }: TRequest<CreateCommentDto>,
+    res: Response
+  ): Promise<void> {
+    const offerId = params.offerId as string;
+    const rating = body.rating;
 
     const comment = await this.commentService.create({
       offerId,
       rating,
-      text: req.body.text,
-      userId: req.body.userId
+      text: body.text,
+      userId: tokenPayload.id
     });
 
     await this.offerService.updateOfferStatistics(offerId, rating);
@@ -195,24 +270,57 @@ export class OfferController extends BaseController {
   }
 
   async show(
-    { params }: TRequest<CreateCommentDto>,
+    { params, tokenPayload }: TRequest<CreateCommentDto>,
     res: Response
   ): Promise<void> {
     const detailsOffer = await this.offerService.findById(
       params.offerId as string
     );
-    const responseData = fillDTO(DetailOfferRdo, detailsOffer);
+
+    const filledOffers = detailsOffer
+      ? await this.fillOfferFavStatus([detailsOffer], tokenPayload?.id || null)
+      : [null];
+
+    const responseData = fillDTO(DetailOfferRdo, filledOffers[0]);
     this.ok(res, responseData);
   }
 
-  async indexPremiums(req: TRequest, res: Response): Promise<void> {
-    const cityObj = await this.cityService.findByCityName(
-      req.query.city as string
-    );
+  async indexPremiums(
+    { query, tokenPayload }: TRequest,
+    res: Response
+  ): Promise<void> {
+    const cityObj = await this.cityService.findByCityName(query.city as string);
 
     const offers = await this.offerService.findPremiumsByCityId(cityObj!.id);
 
-    const responseData = fillDTO(OfferRdo, offers);
+    const filledOffers = await this.fillOfferFavStatus(
+      offers,
+      tokenPayload?.id || null
+    );
+
+    const responseData = fillDTO(OfferRdo, filledOffers);
+    this.ok(res, responseData);
+  }
+
+  async indexFavorites(
+    { tokenPayload }: TRequest,
+    res: Response
+  ): Promise<void> {
+    const favObj = await this.favoriteService.findByUserId(tokenPayload.id);
+
+    const offerIds = favObj?.offerIds;
+
+    if (!offerIds?.length) {
+      return this.ok(res, false);
+    }
+
+    const offers = await this.offerService.getByOfferIds(offerIds);
+
+    const filledOffers = offers
+      ? await this.fillOfferFavStatus(offers, tokenPayload?.id || null)
+      : false;
+
+    const responseData = fillDTO(OfferRdo, filledOffers);
     this.ok(res, responseData);
   }
 }

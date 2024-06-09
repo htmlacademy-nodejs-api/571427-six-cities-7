@@ -26,6 +26,12 @@ Content-Type: application/json
 
 ###
 
+## Проверить токен пользователя
+GET http://localhost:1337/users/login HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImpvaG5AY29udGluZW50YWwuY29tIiwibmFtZSI6ItCU0LbQvtC9INCj0LjQuiIsImlkIjoiNjY1NzExMWQzY2Y3OTI4ODQyMzRiYTRjIiwiaWF0IjoxNzE3ODkyNTg2LCJleHAiOjE3MTgwNjUzODZ9.u0rwlkpN_5BCcqwnqucBQLX1ct7GatlSLjQ7FFObkc4
+
+###
+
 ## Загрузить аватар
 
 POST http://localhost:1337/users/6643e34f81c7dfc04882c0cd/avatar HTTP/1.1

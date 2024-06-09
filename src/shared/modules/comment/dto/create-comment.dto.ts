@@ -10,8 +10,7 @@ import {
   Max,
   MaxLength,
   Min,
-  MinLength,
-  IsMongoId
+  MinLength
 } from 'class-validator';
 import { CreateCommentValidationMessage } from './create-comment.messages.js';
 
@@ -36,7 +35,6 @@ export class CreateCommentDto {
   })
   public rating: TComment['rating'];
 
-  @IsMongoId({ message: CreateCommentValidationMessage.userId.invalidId })
   public userId: string;
 }
 

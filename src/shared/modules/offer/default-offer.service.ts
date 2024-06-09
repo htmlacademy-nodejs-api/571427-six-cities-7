@@ -7,6 +7,7 @@ import {
   DEFAULT_OFFER_COUNT,
   DEFAULT_PREMIUM_OFFER_COUNT
 } from './offer.constant.js';
+import { Types } from 'mongoose';
 
 import type { types } from '@typegoose/typegoose';
 import type {
@@ -54,6 +55,18 @@ export class DefaultOfferService implements IOfferService {
       limit: DEFAULT_PREMIUM_OFFER_COUNT,
       filter: { cityId, isPremium: true }
     });
+  }
+
+  async getByOfferIds(offerIds: string[]): Promise<TDocOfferEntity[] | false> {
+    const offers = await this.offerModel
+      .find({
+        _id: {
+          $in: offerIds.map((offerId) => new Types.ObjectId(offerId))
+        }
+      })
+      .populate('cityId');
+
+    return offers?.length ? offers : false;
   }
 
   private async _getList({
@@ -105,9 +118,4 @@ export class DefaultOfferService implements IOfferService {
       })
       .exec();
   }
-
-  // TODO: жду авторизацию
-  // async findFavorites(): Promise<TDocOfferEntity[]> {
-  //   return;
-  // }
 }
