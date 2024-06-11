@@ -3,7 +3,9 @@ import { RestApplication } from './rest.application.js';
 import { Component } from '../shared/constants/index.js';
 import {
   AppExceptionFilter,
-  IExceptionFilter
+  HttpErrorExceptionFilter,
+  ValidationExceptionFilter,
+  type IExceptionFilter
 } from '../shared/libs/rest/index.js';
 import { PinoLogger, type ILogger } from '../shared/libs/logger/index.js';
 import {
@@ -15,6 +17,7 @@ import {
   type IDatabaseClient,
   MongoDatabaseClient
 } from '../shared/libs/database-client/index.js';
+import { PathTransformer } from '../shared/libs/rest/index.js';
 
 export function createRestApplicationContainer() {
   const restApplicationContainer = new Container();
@@ -38,6 +41,18 @@ export function createRestApplicationContainer() {
   restApplicationContainer
     .bind<IExceptionFilter>(Component.ExceptionFilter)
     .to(AppExceptionFilter)
+    .inSingletonScope();
+  restApplicationContainer
+    .bind<IExceptionFilter>(Component.HttpExceptionFilter)
+    .to(HttpErrorExceptionFilter)
+    .inSingletonScope();
+  restApplicationContainer
+    .bind<IExceptionFilter>(Component.ValidationExceptionFilter)
+    .to(ValidationExceptionFilter)
+    .inSingletonScope();
+  restApplicationContainer
+    .bind<PathTransformer>(Component.PathTransformer)
+    .to(PathTransformer)
     .inSingletonScope();
 
   return restApplicationContainer;

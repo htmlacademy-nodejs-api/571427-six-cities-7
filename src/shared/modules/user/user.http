@@ -7,7 +7,6 @@ Content-Type: application/json
 {
    "name": "Джон Уик",
    "email": "john@continental.com",
-   "avatar": null,
    "password": "9isdrjf90usd",
    "type": "pro"
 }
@@ -28,7 +27,7 @@ Content-Type: application/json
 
 ## Проверить токен пользователя
 GET http://localhost:1337/users/login HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImpvaG5AY29udGluZW50YWwuY29tIiwibmFtZSI6ItCU0LbQvtC9INCj0LjQuiIsImlkIjoiNjY1NzExMWQzY2Y3OTI4ODQyMzRiYTRjIiwiaWF0IjoxNzE3ODkyNTg2LCJleHAiOjE3MTgwNjUzODZ9.u0rwlkpN_5BCcqwnqucBQLX1ct7GatlSLjQ7FFObkc4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImpvaG5AY29udGluZW50YWwuY29tIiwibmFtZSI6ItCU0LbQvtC9INCj0LjQuiIsImlkIjoiNjY2OGQ3MDU1NGQyNzYzOTlhODIxNGE2IiwiaWF0IjoxNzE4MTQ2ODI5LCJleHAiOjE3MTgzMTk2Mjl9.jrmOI5q4eenrvJi7uQOm2y_oAfOoQ97hMzD7IkT9U3o
 
 ###
 

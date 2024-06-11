@@ -1,6 +1,6 @@
 export { HttpMethod } from './types/http-method.enum.js';
 export { BaseController } from './controller/base-controller.abstract.js';
-export { AppExceptionFilter } from './exception-filter/app-exception-filter.js';
+export { AppExceptionFilter } from './exception-filter/app.exception-filter.js';
 export { HttpError } from './errors/index.js';
 export { ValidateObjectIdMiddleware } from './middleware/validate-objectid.middleware.js';
 export { ValidateDtoMiddleware } from './middleware/validate-dto.middleware.js';
@@ -10,6 +10,10 @@ export { ParseTokenMiddleware } from './middleware/parse-token.middleware.js';
 export { PrivateRouteMiddleware } from './middleware/private-route.middleware.js';
 export { LoginRouteMiddleware } from './middleware/login-route.middleware.js';
 export { ValidateAuthorMiddleware } from './middleware/validate-author.middleware.js';
+export { ApplicationError } from './enums/application-error.enum.js';
+export { HttpErrorExceptionFilter } from './exception-filter/http-error.exception-filter.js';
+export { ValidationExceptionFilter } from './exception-filter/validation.exception-filter.js';
+export { PathTransformer } from './transform/path-transformer.js';
 
 export type { IController } from './controller/controller.interface.js';
 export type { IRoute } from './types/route.interface.js';
@@ -18,3 +22,4 @@ export type { TRequestBody } from './types/request-body.type.js';
 export type { TRequestParams } from './types/request.params.type.js';
 export type { TRequest } from './types/request.type.js';
 export type { IMiddleware } from './middleware/middleware.interface.js';
+export type { TValidationErrorField } from './types/validation-error-field.type.js';

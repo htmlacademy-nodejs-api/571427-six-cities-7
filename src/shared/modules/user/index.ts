@@ -7,4 +7,6 @@ export { LoginUserDto } from './dto/login-user.dto.js';
 
 export { createUserContainer } from './user.container.js';
 
+export { DEFAULT_AVATAR_FILE_NAME } from './user.constant.js';
+
 export type { IUserService } from './user-service.interface.js';
