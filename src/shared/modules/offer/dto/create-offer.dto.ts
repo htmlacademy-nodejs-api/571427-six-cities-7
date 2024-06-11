@@ -90,7 +90,8 @@ export class CreateOfferDto {
   })
   public rentCost: TOffer['rentCost'];
 
-  @IsArray({ each: true })
+  @IsArray()
+  @IsString({ each: true })
   public comforts: TOffer['comforts'];
 
   // TODO: будет как-то вычисляться после авторизации

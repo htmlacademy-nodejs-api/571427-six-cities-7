@@ -91,14 +91,9 @@ export class UserController extends BaseController {
   async login({ body }: TLoginUserRequest, res: Response): Promise<void> {
     const user = await this.authService.verify(body);
     const token = await this.authService.authenticate(user);
+    const responseData = fillDTO(LoggedUserRdo, user);
 
-    const responseData = fillDTO(LoggedUserRdo, {
-      email: user.email,
-      name: user.name,
-      token
-    });
-
-    this.ok(res, responseData);
+    this.ok(res, Object.assign(responseData, { token }));
   }
 
   async checkAuthenticate({ tokenPayload: { email } }: Request, res: Response) {
