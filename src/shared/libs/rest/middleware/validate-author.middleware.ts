@@ -24,7 +24,7 @@ export class ValidateAuthorMiddleware implements IMiddleware {
 
     const result = await this.offerService.findById(value as string);
 
-    if (result!.userId.toString() !== req?.tokenPayload.id) {
+    if (result!.userId.id !== req?.tokenPayload.id) {
       throw new HttpError(
         StatusCodes.FORBIDDEN,
         'Forbidden',

@@ -102,7 +102,8 @@ export class UpdateOfferDto {
   public rentCost?: TOffer['rentCost'];
 
   @IsOptional()
-  @IsArray({ each: true })
+  @IsArray()
+  @IsString({ each: true })
   public comforts?: TOffer['comforts'];
 }
 

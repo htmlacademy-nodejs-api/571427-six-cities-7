@@ -13,6 +13,7 @@ import { Component } from '../../constants/index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { UserRdo } from './rdo/user.rdo.js';
 import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
+import { UploadUserAvatarRdo } from './rdo/upload-user-avatar.rdo.js';
 
 import type { IConfig, TRestSchema } from '../../libs/config/index.js';
 import type { IUserService } from './user-service.interface.js';
@@ -110,9 +111,15 @@ export class UserController extends BaseController {
     this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
   }
 
-  async uploadAvatar(req: Request, res: Response) {
-    this.created(res, {
-      filepath: req.file?.path
+  async uploadAvatar({ params, file }: Request, res: Response) {
+    const { userId } = params;
+    const uploadFile = { avatar: file?.filename };
+
+    await this.userService.updateById(userId, uploadFile);
+    const filledData = fillDTO(UploadUserAvatarRdo, {
+      filepath: uploadFile.avatar
     });
+
+    this.created(res, filledData);
   }
 }

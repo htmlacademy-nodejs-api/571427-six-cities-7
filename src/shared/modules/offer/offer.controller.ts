@@ -200,7 +200,9 @@ export class OfferController extends BaseController {
       userId: tokenPayload.id
     });
 
-    this.ok(res, result);
+    result.isFavorite = false;
+
+    this.ok(res, fillDTO(OfferRdo, result));
   }
 
   async update(
@@ -243,11 +245,15 @@ export class OfferController extends BaseController {
       offerId: body.offerId
     };
 
-    const result = body.isFavorite
-      ? await this.favoriteService.addToFavorites(options)
-      : await this.favoriteService.removeFromFavorites(options);
+    const methodName = body.isFavorite
+      ? 'addToFavorites'
+      : 'removeFromFavorites';
 
-    this.ok(res, result);
+    await this.favoriteService[methodName](options);
+
+    const offer = await this.offerService.findById(body.offerId);
+
+    this.ok(res, offer);
   }
 
   async createComment(
@@ -266,7 +272,7 @@ export class OfferController extends BaseController {
 
     await this.offerService.updateOfferStatistics(offerId, rating);
 
-    this.ok(res, comment);
+    this.ok(res, fillDTO(CommentRdo, comment));
   }
 
   async show(
@@ -306,19 +312,19 @@ export class OfferController extends BaseController {
     { tokenPayload }: TRequest,
     res: Response
   ): Promise<void> {
-    const favObj = await this.favoriteService.findByUserId(tokenPayload.id);
+    const userId = tokenPayload.id;
+
+    const favObj = await this.favoriteService.findByUserId(userId);
 
     const offerIds = favObj?.offerIds;
 
     if (!offerIds?.length) {
-      return this.ok(res, false);
+      return this.ok(res, []);
     }
 
     const offers = await this.offerService.getByOfferIds(offerIds);
 
-    const filledOffers = offers
-      ? await this.fillOfferFavStatus(offers, tokenPayload?.id || null)
-      : false;
+    const filledOffers = await this.fillOfferFavStatus(offers, userId);
 
     const responseData = fillDTO(OfferRdo, filledOffers);
     this.ok(res, responseData);

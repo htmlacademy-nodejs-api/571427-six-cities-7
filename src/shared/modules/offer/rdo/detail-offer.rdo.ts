@@ -1,10 +1,14 @@
 import { Expose, Type, Transform } from 'class-transformer';
 import { CityRdo } from '../../city/index.js';
 import { getAverageRating } from '../utils/get-average-rating.js';
+import { UserRdo } from '../../user/rdo/user.rdo.js';
 
 import type { Comfort } from '../../../enums/index.js';
 
 export class DetailOfferRdo {
+  @Expose()
+  public id: string;
+
   @Expose()
   public title: string;
 
@@ -23,8 +27,9 @@ export class DetailOfferRdo {
   @Expose()
   public comforts: Comfort[];
 
-  @Expose()
-  public userId: string;
+  @Expose({ name: 'userId' })
+  @Type(() => UserRdo)
+  public user: string;
 
   @Expose({ name: 'createdAt' })
   public postDate: Date;
