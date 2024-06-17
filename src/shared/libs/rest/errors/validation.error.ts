@@ -4,7 +4,7 @@ import { HttpError } from './http-error.js';
 import type { TValidationErrorField } from '../types/validation-error-field.type.js';
 
 export class ValidationError extends HttpError {
-  public details: TValidationErrorField[] = [];
+  details: TValidationErrorField[] = [];
 
   constructor(message: string, errors: TValidationErrorField[]) {
     super(StatusCodes.BAD_REQUEST, message);

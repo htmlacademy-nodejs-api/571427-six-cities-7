@@ -38,8 +38,6 @@ export class UserEntity extends defaultClasses.TimeStamps implements TUser {
     required: true,
     type: String,
     unique: true
-    // TODO: найти регулярку
-    // match: [сюда регулярку, 'Please fill a valid email address']
   })
   public email: TUser['email'];
 

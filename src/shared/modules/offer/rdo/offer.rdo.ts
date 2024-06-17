@@ -4,6 +4,9 @@ import { getAverageRating } from '../utils/get-average-rating.js';
 
 export class OfferRdo {
   @Expose()
+  public id: string;
+
+  @Expose()
   public title: string;
 
   @Expose({ name: 'createdAt' })

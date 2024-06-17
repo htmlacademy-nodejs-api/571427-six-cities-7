@@ -34,14 +34,18 @@ export class DefaultOfferService implements IOfferService {
       commentsCount: 0,
       sumRating: 0
     });
+    const populatedResult = await result.populate(['userId', 'cityId']);
 
     this.logger.info(`New offer created: ${dto.title}`);
 
-    return result;
+    return populatedResult;
   }
 
   async findById(offerId: string): Promise<TNullable<TDocOfferEntity>> {
-    return this.offerModel.findById(offerId).populate('cityId').exec();
+    return this.offerModel
+      .findById(offerId)
+      .populate(['cityId', 'userId'])
+      .exec();
   }
 
   async getList({
@@ -57,7 +61,7 @@ export class DefaultOfferService implements IOfferService {
     });
   }
 
-  async getByOfferIds(offerIds: string[]): Promise<TDocOfferEntity[] | false> {
+  async getByOfferIds(offerIds: string[]): Promise<TDocOfferEntity[]> {
     const offers = await this.offerModel
       .find({
         _id: {
@@ -66,7 +70,7 @@ export class DefaultOfferService implements IOfferService {
       })
       .populate('cityId');
 
-    return offers?.length ? offers : false;
+    return offers?.length ? offers : [];
   }
 
   private async _getList({
@@ -98,6 +102,7 @@ export class DefaultOfferService implements IOfferService {
   ): Promise<TNullable<TDocOfferEntity>> {
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, { new: true })
+      .populate(['userId', 'cityId'])
       .exec();
   }
 

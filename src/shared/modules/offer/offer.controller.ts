@@ -7,7 +7,7 @@ import {
   ValidateObjectExistMiddleware,
   ValidateObjectIdMiddleware,
   PrivateRouteMiddleware,
-  ValidateAuthorMiddleware,
+  ValidateOfferAuthorMiddleware,
   type TRequest
 } from '../../libs/rest/index.js';
 import { fillDTO } from '../../helpers/index.js';
@@ -20,6 +20,7 @@ import {
 } from '../comment/index.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
 import { DetailOfferRdo } from './rdo/detail-offer.rdo.js';
+import { DEFAULT_OFFER_COUNT } from './offer.constant.js';
 
 import type { Request, Response } from 'express';
 import type { ILogger } from '../../libs/logger/index.js';
@@ -102,7 +103,8 @@ export class OfferController extends BaseController {
       handler: this.delete,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new ValidateObjectIdMiddleware('offerId')
+        new ValidateObjectIdMiddleware('offerId'),
+        new ValidateOfferAuthorMiddleware('offerId', this.offerService)
       ]
     });
 
@@ -119,9 +121,9 @@ export class OfferController extends BaseController {
       handler: this.update,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new ValidateAuthorMiddleware('offerId', this.offerService),
-        new ValidateDtoMiddleware(UpdateOfferDto),
-        new ValidateObjectIdMiddleware('offerId')
+        new ValidateObjectIdMiddleware('offerId'),
+        new ValidateOfferAuthorMiddleware('offerId', this.offerService),
+        new ValidateDtoMiddleware(UpdateOfferDto)
       ]
     });
 
@@ -144,8 +146,13 @@ export class OfferController extends BaseController {
     });
   }
 
-  async index({ tokenPayload }: Request, res: Response): Promise<void> {
-    const offers = await this.offerService.getList();
+  async index(req: Request, res: Response): Promise<void> {
+    const { query, tokenPayload } = req;
+    const limit = query.limit ? Number(query.limit) : DEFAULT_OFFER_COUNT;
+
+    const offers = await this.offerService.getList({
+      limit
+    });
 
     const filledOffers = await this.fillOfferFavStatus(
       offers,
@@ -200,11 +207,13 @@ export class OfferController extends BaseController {
       userId: tokenPayload.id
     });
 
-    this.ok(res, result);
+    result.isFavorite = false;
+
+    this.ok(res, fillDTO(OfferRdo, result));
   }
 
   async update(
-    { params, body }: TRequest<UpdateOfferDto>,
+    { params, body, tokenPayload }: TRequest<UpdateOfferDto>,
     res: Response
   ): Promise<void> {
     const offerId = params.offerId as string;
@@ -218,12 +227,27 @@ export class OfferController extends BaseController {
       });
     }
 
-    const updateOffer = await this.offerService.updateById(offerId, {
+    const updatedOffer = await this.offerService.updateById(offerId, {
       ...updateData,
       cityId: cityObj?.id
     });
 
-    this.ok(res, updateOffer);
+    let returnedOffer = updatedOffer!;
+
+    // микрооптимизация на то, чтобы не начитывать каждый раз значение isFavorite
+    // если пришло в запросе, то его и используем
+    if (typeof updateData!.isFavorite === 'boolean') {
+      returnedOffer.isFavorite = updateData.isFavorite;
+    } else {
+      const filledOffers = await this.fillOfferFavStatus(
+        [returnedOffer],
+        tokenPayload.id
+      );
+
+      returnedOffer = filledOffers[0];
+    }
+
+    this.ok(res, fillDTO(OfferRdo, returnedOffer));
   }
 
   async indexComment(req: Request, res: Response): Promise<void> {
@@ -243,11 +267,17 @@ export class OfferController extends BaseController {
       offerId: body.offerId
     };
 
-    const result = body.isFavorite
-      ? await this.favoriteService.addToFavorites(options)
-      : await this.favoriteService.removeFromFavorites(options);
+    const methodName = body.isFavorite
+      ? 'addToFavorites'
+      : 'removeFromFavorites';
 
-    this.ok(res, result);
+    await this.favoriteService[methodName](options);
+
+    const offer = await this.offerService.findById(body.offerId as string);
+
+    offer!.isFavorite = body.isFavorite as boolean;
+
+    this.ok(res, fillDTO(DetailOfferRdo, offer));
   }
 
   async createComment(
@@ -266,7 +296,7 @@ export class OfferController extends BaseController {
 
     await this.offerService.updateOfferStatistics(offerId, rating);
 
-    this.ok(res, comment);
+    this.ok(res, fillDTO(CommentRdo, comment));
   }
 
   async show(
@@ -306,19 +336,19 @@ export class OfferController extends BaseController {
     { tokenPayload }: TRequest,
     res: Response
   ): Promise<void> {
-    const favObj = await this.favoriteService.findByUserId(tokenPayload.id);
+    const userId = tokenPayload.id;
+
+    const favObj = await this.favoriteService.findByUserId(userId);
 
     const offerIds = favObj?.offerIds;
 
     if (!offerIds?.length) {
-      return this.ok(res, false);
+      return this.ok(res, []);
     }
 
     const offers = await this.offerService.getByOfferIds(offerIds);
 
-    const filledOffers = offers
-      ? await this.fillOfferFavStatus(offers, tokenPayload?.id || null)
-      : false;
+    const filledOffers = await this.fillOfferFavStatus(offers, userId);
 
     const responseData = fillDTO(OfferRdo, filledOffers);
     this.ok(res, responseData);

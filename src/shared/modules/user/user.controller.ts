@@ -6,21 +6,23 @@ import {
   UploadFileMiddleware,
   ValidateObjectIdMiddleware,
   PrivateRouteMiddleware,
-  LoginRouteMiddleware
+  LoginRouteMiddleware,
+  type TRequest
 } from '../../libs/rest/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { Component } from '../../constants/index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { UserRdo } from './rdo/user.rdo.js';
 import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
+import { UploadUserAvatarRdo } from './rdo/upload-user-avatar.rdo.js';
 
+import type { CreateUserDto } from './dto/create-user.dto.js';
 import type { IConfig, TRestSchema } from '../../libs/config/index.js';
 import type { IUserService } from './user-service.interface.js';
 import type { Request, Response } from 'express';
 import type { ILogger } from '../../libs/logger/index.js';
-import type { TCreateUserRequest } from './create-user-request.type.js';
-import type { TLoginUserRequest } from './login-user-request.type.js';
 import type { IAuthService } from '../auth/index.js';
+import type { LoginUserDto } from './dto/login-user.dto.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -70,7 +72,10 @@ export class UserController extends BaseController {
     });
   }
 
-  async create({ body }: TCreateUserRequest, res: Response): Promise<void> {
+  async create(
+    { body }: TRequest<CreateUserDto>,
+    res: Response
+  ): Promise<void> {
     const existsUser = await this.userService.findByEmail(body.email);
 
     if (existsUser) {
@@ -88,7 +93,7 @@ export class UserController extends BaseController {
     this.created(res, fillDTO(UserRdo, result));
   }
 
-  async login({ body }: TLoginUserRequest, res: Response): Promise<void> {
+  async login({ body }: TRequest<LoginUserDto>, res: Response): Promise<void> {
     const user = await this.authService.verify(body);
     const token = await this.authService.authenticate(user);
     const responseData = fillDTO(LoggedUserRdo, user);
@@ -110,9 +115,15 @@ export class UserController extends BaseController {
     this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
   }
 
-  async uploadAvatar(req: Request, res: Response) {
-    this.created(res, {
-      filepath: req.file?.path
+  async uploadAvatar({ params, file }: Request, res: Response) {
+    const { userId } = params;
+    const uploadFile = { avatar: file?.filename };
+
+    await this.userService.updateById(userId, uploadFile);
+    const filledData = fillDTO(UploadUserAvatarRdo, {
+      filepath: uploadFile.avatar
     });
+
+    this.created(res, filledData);
   }
 }

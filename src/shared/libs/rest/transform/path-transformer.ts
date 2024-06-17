@@ -35,7 +35,7 @@ export class PathTransformer {
     return STATIC_RESOURCE_FIELDS.includes(property);
   }
 
-  public execute(data: Record<string, unknown>): Record<string, unknown> {
+  execute(data: Record<string, unknown>): Record<string, unknown> {
     const stack = [data];
     while (stack.length > 0) {
       const current = stack.pop();

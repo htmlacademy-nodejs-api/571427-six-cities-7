@@ -14,12 +14,7 @@ export class AppExceptionFilter implements IExceptionFilter {
     this.logger.info('Register AppExceptionFilter');
   }
 
-  public catch(
-    error: Error,
-    _req: Request,
-    res: Response,
-    _next: NextFunction
-  ): void {
+  catch(error: Error, _req: Request, res: Response, _next: NextFunction): void {
     this.logger.error(error.message, error);
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)

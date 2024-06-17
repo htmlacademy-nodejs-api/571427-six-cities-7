@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  title: City resources
+  version: '1.0'
+paths: {}
+components:
+  schemas:
+    CityObject:
+      type: object
+
+      properties:
+        name:
+          type: string
+          example: Paris
+          enum:
+            - Paris
+            - Cologne
+            - Brussels
+            - Amsterdam
+            - Hamburg
+            - Dusseldorf
+
+        coords:
+          type: object
+          properties:
+            lat:
+              type: number
+              example: 48.85661
+
+            lon:
+              type: number
+              example: 2.351499

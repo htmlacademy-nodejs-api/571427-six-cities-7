@@ -2,6 +2,7 @@ import { UserEntity } from './user.entity.js';
 import { inject, injectable } from 'inversify';
 import { Component } from '../../constants/index.js';
 import { DEFAULT_AVATAR_FILE_NAME } from './user.constant.js';
+import { UpdateUserDto } from './dto/update-user.dto.js';
 
 import type { ILogger } from '../../libs/logger/index.js';
 import type { types } from '@typegoose/typegoose';
@@ -42,5 +43,12 @@ export class DefaultUserService implements IUserService {
     }
 
     return this.create(dto, salt);
+  }
+
+  async updateById(
+    userId: string,
+    dto: UpdateUserDto
+  ): Promise<TNullable<TDocUserEntity>> {
+    return this.userModel.findByIdAndUpdate(userId, dto, { new: true }).exec();
   }
 }

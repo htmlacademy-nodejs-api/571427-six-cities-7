@@ -1,0 +1,104 @@
+openapi: 3.0.3
+info:
+  title: User resources
+  version: '1.0'
+paths: {}
+components:
+  schemas:
+    CreateUserRequest:
+      type: object
+
+      properties:
+        name:
+          type: string
+          example: Keks
+
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        password:
+          type: string
+          example: 123456
+
+        type:
+          type: string
+          example: pro
+          enum:
+            - pro
+            - regular
+
+    UserResponse:
+      type: object
+
+      properties:
+        id:
+          type: string
+          example: 66701aaba5eed9f50a7a72d0
+
+        name:
+          type: string
+          example: Keks
+
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        avatar:
+          type: string
+          example: http://localhost:1337/static/default-avatar.jpg
+
+        type:
+          type: string
+          example: pro
+          enum:
+            - pro
+            - regular
+
+    LoginUserRequest:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        password:
+          type: string
+          example: 123456
+
+    LoginUserResponse:
+      type: object
+
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImpvaG53aWNrQGdtYWlsLmNvbSIsIm5hbWUiOiJKb2huIFdpY2siLCJpZCI6IjY2NmI4OTBkMmUwNDE4NWM0OGI4MWMzYSIsImlhdCI6MTcxODYyMzE0MSwiZXhwIjoxNzE4Nzk1OTQxfQ.DgVa_Dbe0T9WnNlb6eKGkAxN-2iQlQuJDXGcnjdnPM8
+
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        name:
+          type: string
+          example: Keks
+
+        avatar:
+          type: string
+          example: http://localhost:1337/static/default-avatar.jpg
+
+    CheckTokenResponse:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: keks@htmlacademy.ru
+
+        name:
+          type: string
+          example: Keks
+
+        avatar:
+          type: string
+          example: http://localhost:1337/static/default-avatar.jpg

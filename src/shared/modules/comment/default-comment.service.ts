@@ -23,16 +23,18 @@ export class DefaultCommentService implements ICommentService {
 
   async create(dto: CreateCommentDtoInner): Promise<TDocCommentEntity> {
     const result = await this.commentModel.create(dto);
+    const populatedResult = await result.populate('userId');
 
     this.logger.info(`New comment with rating ${dto.rating} created`);
 
-    return result;
+    return populatedResult;
   }
 
   async getList(filter: TGetListFilter): Promise<TDocCommentEntity[]> {
     return this.commentModel
       .find({ offerId: filter?.offerId })
       .limit(filter?.limit || DEFAULT_COMMENTS_COUNT)
+      .populate('userId')
       .sort({ postDate: SortType.Down })
       .exec();
   }
