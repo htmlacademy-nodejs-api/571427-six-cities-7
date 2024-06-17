@@ -20,14 +20,14 @@ Content-Type: application/json
 
 {
    "email": "johnwick@gmail.com",
-   "password": "test_pass"
+   "password": "pass_test"
 }
 
 ###
 
 ## Проверить токен пользователя
 GET http://localhost:1337/users/login HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImpvaG53aWNrQGdtYWlsLmNvbSIsIm5hbWUiOiJKb2huIFdpY2siLCJpZCI6IjY2NjhlZTczOWMwY2Q5YTYwMzYyY2I4NCIsImlhdCI6MTcxODE1NTE5MywiZXhwIjoxNzE4MzI3OTkzfQ.P0ReVWSz92glvopsXR93JLZNwJQ8FjPuXdrxkQk2Pck
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImpvaG53aWNrQGdtYWlsLmNvbSIsIm5hbWUiOiJKb2huIFdpY2siLCJpZCI6IjY2NmI4OTBkMmUwNDE4NWM0OGI4MWMzYSIsImlhdCI6MTcxODYyMjA2NSwiZXhwIjoxNzE4Nzk0ODY1fQ.jTX1Bl8yGjiWW6Wg466j4_I-6ySUAYfwuNOAAusoN0c
 
 ###
 

@@ -93,9 +93,6 @@ export class CreateOfferDto {
   @IsArray()
   @IsString({ each: true })
   public comforts: TOffer['comforts'];
-
-  // TODO: будет как-то вычисляться после авторизации
-  public userId: string;
 }
 
 export class CreateOfferDtoInner {
@@ -110,6 +107,5 @@ export class CreateOfferDtoInner {
   guestQuantity: TOffer['guestQuantity'];
   rentCost: TOffer['rentCost'];
   comforts: TOffer['comforts'];
-  // TODO: будет как-то вычисляться после авторизации
   userId: string;
 }

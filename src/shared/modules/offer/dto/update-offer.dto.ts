@@ -105,6 +105,9 @@ export class UpdateOfferDto {
   @IsArray()
   @IsString({ each: true })
   public comforts?: TOffer['comforts'];
+
+  @IsOptional()
+  public isFavorite?: TOffer['isFavorite'];
 }
 
 export class UpdateOfferDtoInner {

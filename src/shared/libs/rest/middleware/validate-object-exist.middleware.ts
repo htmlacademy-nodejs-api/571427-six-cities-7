@@ -15,7 +15,7 @@ export class ValidateObjectExistMiddleware implements IMiddleware {
     private dbFieldName: string,
     private queryFieldName: string,
 
-    // TODO: повторил интерфейс либы, но линтер ругается на any. мб стоит перейти на вариант из лекции
+    // повторил интерфейс либы, но линтер ругается на any. мб стоит перейти на вариант из лекции
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private model: ReturnModelType<AnyParamConstructor<any>, BeAnObject>
   ) {}

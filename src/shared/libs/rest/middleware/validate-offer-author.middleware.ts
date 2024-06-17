@@ -8,7 +8,7 @@ import type { NextFunction, Request, Response } from 'express';
 import type { IMiddleware } from './middleware.interface.js';
 import type { IOfferService } from '../../../modules/offer/index.js';
 
-export class ValidateAuthorMiddleware implements IMiddleware {
+export class ValidateOfferAuthorMiddleware implements IMiddleware {
   constructor(
     private readonly queryFieldName: string = 'offerId',
     @inject(Component.OfferService)
@@ -28,7 +28,7 @@ export class ValidateAuthorMiddleware implements IMiddleware {
       throw new HttpError(
         StatusCodes.FORBIDDEN,
         'Forbidden',
-        'ValidateAuthorMiddleware'
+        'ValidateOfferAuthorMiddleware'
       );
     }
 

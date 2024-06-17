@@ -15,12 +15,7 @@ export class HttpErrorExceptionFilter implements IExceptionFilter {
     this.logger.info('Register HttpErrorExceptionFilter');
   }
 
-  public catch(
-    error: unknown,
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): void {
+  catch(error: unknown, req: Request, res: Response, next: NextFunction): void {
     if (!(error instanceof HttpError)) {
       return next(error);
     }

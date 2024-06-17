@@ -96,13 +96,13 @@ export const postOffer = createAsyncThunk<Offer, NewOffer, { extra: Extra }>(
   Action.POST_OFFER,
   async (newOffer, { extra }) => {
     const { api, history } = extra;
-    const { data } = await api.post<Offer>(
+    const { data } = await api.post<OfferDto>(
       ApiRoute.Offers,
       postOfferAdapter(newOffer)
     );
     history.push(`${AppRoute.Property}/${data.id}`);
 
-    return data;
+    return offerAdapter(data);
   }
 );
 
@@ -110,13 +110,13 @@ export const editOffer = createAsyncThunk<Offer, Offer, { extra: Extra }>(
   Action.EDIT_OFFER,
   async (offer, { extra }) => {
     const { api, history } = extra;
-    const { data } = await api.patch<Offer>(
+    const { data } = await api.patch<OfferDto>(
       `${ApiRoute.Offers}/${offer.id}`,
-      postOfferAdapter(offer)
+      { ...postOfferAdapter(offer), isFavorite: offer.isFavorite }
     );
     history.push(`${AppRoute.Property}/${data.id}`);
 
-    return data;
+    return offerAdapter(data);
   }
 );
 
@@ -256,7 +256,7 @@ export const postComment = createAsyncThunk<
 >(Action.POST_COMMENT, async ({ id, comment, rating }, { extra }) => {
   const { api } = extra;
   const { data } = await api.post<CommentDto>(
-    `${ApiRoute.Offers}${id}${ApiRoute.Comments}`,
+    `${ApiRoute.Offers}/${id}${ApiRoute.Comments}`,
     { text: comment, rating }
   );
 

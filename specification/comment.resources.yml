@@ -1,0 +1,67 @@
+openapi: 3.0.3
+info:
+  title: Comment resources
+  version: '1.0'
+paths: {}
+components:
+  schemas:
+    CreateCommentRequest:
+      type: object
+
+      properties:
+        text:
+          type: string
+          example: Супер!
+
+        rating:
+          type: number
+          example: 5
+
+    CreateCommentResponse:
+      type: object
+
+      properties:
+        id:
+          type: string
+          example: 66701aaba5eed9f50a7a72d0
+
+        createdAt:
+          type: string
+          format: date-time
+          example: 2024-06-17T14:02:24.879Z
+
+        text:
+          type: string
+          example: Супер!
+
+        user:
+          $ref: './user.resources.yml#/components/schemas/UserResponse'
+
+        offerId:
+          type: string
+          example: 667041f01297a7a5d85f7451
+
+    CommentListResponse:
+      type: array
+
+      items:
+        properties:
+          id:
+            type: string
+            example: 66701aaba5eed9f50a7a72d0
+
+          createdAt:
+            type: string
+            format: date-time
+            example: 2024-06-17T14:02:24.879Z
+
+          text:
+            type: string
+            example: Супер!
+
+          user:
+            $ref: './user.resources.yml#/components/schemas/UserResponse'
+
+          offerId:
+            type: string
+            example: 667041f01297a7a5d85f7451

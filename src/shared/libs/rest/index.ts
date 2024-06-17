@@ -9,7 +9,7 @@ export { UploadFileMiddleware } from './middleware/upload-file.middleware.js';
 export { ParseTokenMiddleware } from './middleware/parse-token.middleware.js';
 export { PrivateRouteMiddleware } from './middleware/private-route.middleware.js';
 export { LoginRouteMiddleware } from './middleware/login-route.middleware.js';
-export { ValidateAuthorMiddleware } from './middleware/validate-author.middleware.js';
+export { ValidateOfferAuthorMiddleware } from './middleware/validate-offer-author.middleware.js';
 export { ApplicationError } from './enums/application-error.enum.js';
 export { HttpErrorExceptionFilter } from './exception-filter/http-error.exception-filter.js';
 export { ValidationExceptionFilter } from './exception-filter/validation.exception-filter.js';

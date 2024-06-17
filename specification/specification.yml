@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: API сервер для проекта «Шесть городов»
   description: |-
@@ -26,7 +26,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/userConfidential'
+              $ref: './user.resources.yml#/components/schemas/CreateUserRequest'
         required: true
 
       responses:
@@ -35,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
+                $ref: './user.resources.yml#/components/schemas/UserResponse'
 
         "409":
           description: Пользователь с таким email уже существует
@@ -52,7 +52,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/userLogin'
+              $ref: './user.resources.yml#/components/schemas/LoginUserRequest'
         required: true
 
       responses:
@@ -61,7 +61,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/userAuthToken'
+                $ref: './user.resources.yml#/components/schemas/LoginUserResponse'
 
         "409":
           description: Неверная пара email\пароль
@@ -72,43 +72,13 @@ paths:
       summary: Проверка состояния пользователя
       description: Возвращает информацию по авторизованному пользователю
 
-      requestBody:
-        description: Информация для проверки состояния пользователя
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/userAuthToken'
-        required: true
-
       responses:
         "201":
           description: Сессия активна
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
-
-        "409":
-          description: Неверный токен
-
-  /users/logout:
-    post:
-      tags:
-        - users
-      summary: Деавторизация пользователя
-      description: Деавторизирует пользователя из аккаунта
-
-      requestBody:
-        description: Информация для деавторизации
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/userAuthToken'
-        required: true
-
-      responses:
-        "201":
-          description: Успешная деавторизация
+                $ref: './user.resources.yml#/components/schemas/CheckTokenResponse'
 
         "409":
           description: Неверный токен
@@ -125,7 +95,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/offersQuery'
+              $ref: './offer.resources.yml#/components/schemas/OfferListRequest'
 
       responses:
         "201":
@@ -133,7 +103,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/offers'
+                $ref: './offer.resources.yml#/components/schemas/OfferListResponse'
 
     post:
       tags:
@@ -146,7 +116,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/offerDetail'
+              $ref: './offer.resources.yml#/components/schemas/CreateOfferRequest'
         required: true
 
       responses:
@@ -155,7 +125,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/offerDetail'
+                $ref: './offer.resources.yml#/components/schemas/CreateOfferResponse'
 
         "401":
           description: Нужно авторизоваться
@@ -176,7 +146,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/offerDetail'
+                $ref: './offer.resources.yml#/components/schemas/OfferDetailResponse'
 
     patch:
       tags:
@@ -190,7 +160,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/offerDetail'
+                $ref: './offer.resources.yml#/components/schemas/OfferDetailResponse'
 
         "401":
           description: Нужно авторизоваться
@@ -221,20 +191,13 @@ paths:
       summary: Получает список комментариев к предложению
       description: Получает список комментариев к предложению
 
-      requestBody:
-        description: Информация для получения списка комментариев
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/offersCommentsQuery'
-
       responses:
         "201":
           description: Список комментариев к предложений
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/comments'
+                $ref: './comment.resources.yml#/components/schemas/CommentListResponse'
 
     post:
       tags:
@@ -247,7 +210,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/commentsQuery'
+              $ref: './comment.resources.yml#/components/schemas/CreateCommentRequest'
         required: true
 
       responses:
@@ -256,7 +219,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/comment'
+                $ref: './comment.resources.yml#/components/schemas/CreateCommentResponse'
 
         "400":
           description: Переданы не верные данные. Комментарий должен быть от 5 и до 1024 символов. Рейтинг должен быть от 1 до 5
@@ -279,12 +242,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/toggleFavorite'
+              $ref: './offer.resources.yml#/components/schemas/ToggleOfferFavRequest'
         required: true
 
       responses:
         "201":
           description: Действие успешно совершено
+          content:
+            application/json:
+              schema:
+                $ref: './offer.resources.yml#/components/schemas/ToggleOfferFavResponse'
 
         "401":
           description: Нужно авторизоваться
@@ -301,7 +268,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/offers'
+                $ref: './offer.resources.yml#/components/schemas/FavListResponse'
 
         "401":
           description: Нужно авторизоваться
@@ -318,7 +285,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/premiumOffers'
+              $ref: './offer.resources.yml#/components/schemas/PremListRequest'
 
       responses:
         "201":
@@ -326,217 +293,4 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/offers'
-
-components:
-  schemas:
-    user:
-      type: object
-
-      properties:
-        email:
-          type: string
-          example: keks@htmlacademy.ru
-
-        name:
-          type: string
-          example: Keks
-
-        type:
-          type: string
-          example: Обычный
-
-        avatar:
-          type: string
-          format: binary
-
-    userConfidential:
-      allOf:
-        - $ref: '#/components/schemas/user'
-        - type: object
-          properties:
-            password:
-              type: string
-              example: 123456
-
-    userAuthToken:
-      type: object
-
-      properties:
-        token:
-          type: string
-          example: hawhe21hoiho2asd2132
-
-    userLogin:
-      type: object
-
-      properties:
-        email: 
-          type: string
-          example: keks@htmlacademy.ru
-
-        password: 
-          type: string
-          example: 123456
-
-    offer:
-      type: object
-      properties:
-        title:
-          type: string
-          example: Супер предложение!
-        postDate:
-          type: string
-          format: date-time
-          example: 2022-04-06T08:45:40.283Z
-        city:
-          $ref: '#/components/schemas/city'
-        preview:
-          type: string
-          example: https://www.youtube.com/watch?v=dQw4w9WgXcQ
-        isPremium:
-          type: boolean
-          example: true
-        isFavorite:
-          type: boolean
-          example: false
-        rating:
-          type: number
-          example: 5
-        housing:
-          type: string
-          example: apartment
-        rentCost:
-          type: number
-          example: 1337
-        commentsCount:
-          type: number
-          example: 322
-
-    offers:
-      type: array
-      items:
-        $ref: '#/components/schemas/offer'
-
-    offerDetail:
-      allOf:
-        - $ref: '#/components/schemas/offer'
-        - $ref: '#/components/schemas/city'
-        - type: object
-          properties:
-            description:
-              type: string
-              example: Это крутое предлжения явно не оставит тебя равнодушным
-            photoes:
-              type: array
-              items:
-                type: string
-              example: ['path/to/photo1', 'path/to/photo2']
-            roomQuantity:
-              type: number
-              example: 7
-            guestQuantity:
-              type: number
-              example: 4
-            comforts:
-              type: array
-              items:
-                type: string
-              example: ['Breakfast', 'Laptop friendly workspace', 'Fridge']
-            userId:
-              type: string
-              example: 6643e34f81c7dfc04882c0cd
-
-    offersQuery:
-      type: object
-
-      properties:
-        limit:
-          type: number
-          example: 60
-
-        sorting:
-          type: string
-          example: ASC
-    
-    offersCommentsQuery:
-      type: object
-
-      properties:
-        limit:
-          type: number
-          example: 50
-
-    premiumOffers:
-      type: object
-
-      properties:
-        city:
-          type: string
-          example: Paris
-
-    toggleFavorite:
-      type: object
-
-      properties:
-        offerId:
-          type: string
-          example: 665c68b8c9fc33831326961e
-
-        isFavorite:
-          type: boolean
-          example: true
-
-    comment:
-      type: object
-
-      properties:
-        text:
-          type: string
-          example: Отличное предложение!
-
-        creationDate:
-          type: string
-          format: date-time
-          example: 2022-04-06T08:45:40.283Z
-
-        rating:
-          type: number
-          example: 5
-
-        author:
-          type: string
-          example: 6643e21523bd8327437a6ff6
-
-    comments:
-      type: array
-      items:
-        $ref: '#/components/schemas/comment'
-
-    commentsQuery:
-      type: object
-
-      properties:
-        offerId:
-          type: string
-          example: 12345
-
-    city:
-      type: object
-
-      properties:
-        name:
-          type: string
-          example: Paris
-
-        coords:
-          type: object
-
-          properties:
-            lat:
-              type: number
-              example: 48.85661
-
-            lon:
-              type: number
-              example: 2.351499
+                $ref: './offer.resources.yml#/components/schemas/PremListResponse'

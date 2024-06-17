@@ -15,7 +15,7 @@ export class ValidationExceptionFilter implements IExceptionFilter {
     this.logger.info('Register ValidationExceptionFilter');
   }
 
-  public catch(
+  catch(
     error: unknown,
     _req: Request,
     res: Response,

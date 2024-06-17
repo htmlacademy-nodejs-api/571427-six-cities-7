@@ -9,7 +9,7 @@ import type { IMiddleware } from './middleware.interface.js';
 export class ValidateDtoMiddleware implements IMiddleware {
   constructor(private dto: ClassConstructor<object>) {}
 
-  public async execute(
+  async execute(
     { body, path }: Request,
     _res: Response,
     next: NextFunction

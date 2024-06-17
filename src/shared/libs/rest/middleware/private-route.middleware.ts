@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { HttpError } from '../errors/index.js';
+import { BaseUserException } from '../../../modules/auth/errors/index.js';
 
 import type { NextFunction, Request, Response } from 'express';
 import type { IMiddleware } from './middleware.interface.js';
@@ -11,9 +11,8 @@ export class PrivateRouteMiddleware implements IMiddleware {
     next: NextFunction
   ): Promise<void> {
     if (!tokenPayload) {
-      throw new HttpError(
+      throw new BaseUserException(
         StatusCodes.UNAUTHORIZED,
-        'Unauthorized',
         'PrivateRouteMiddleware'
       );
     }
