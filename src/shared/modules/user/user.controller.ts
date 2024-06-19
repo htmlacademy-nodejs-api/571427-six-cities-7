@@ -7,6 +7,7 @@ import {
   ValidateObjectIdMiddleware,
   PrivateRouteMiddleware,
   LoginRouteMiddleware,
+  ValidatePasswordMiddleware,
   type TRequest
 } from '../../libs/rest/index.js';
 import { StatusCodes } from 'http-status-codes';
@@ -40,7 +41,10 @@ export class UserController extends BaseController {
       path: '/register',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new LoginRouteMiddleware()]
+      middlewares: [
+        new LoginRouteMiddleware(),
+        new ValidatePasswordMiddleware()
+      ]
     });
 
     this.addRoute({
@@ -90,6 +94,7 @@ export class UserController extends BaseController {
       body,
       this.configService.get('SALT')
     );
+
     this.created(res, fillDTO(UserRdo, result));
   }
 

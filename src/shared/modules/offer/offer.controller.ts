@@ -4,7 +4,7 @@ import {
   BaseController,
   HttpMethod,
   ValidateDtoMiddleware,
-  ValidateObjectExistMiddleware,
+  ValidateCityExistMiddleware,
   ValidateObjectIdMiddleware,
   PrivateRouteMiddleware,
   ValidateOfferAuthorMiddleware,
@@ -30,11 +30,9 @@ import type {
 } from './offer-service.interface.js';
 import type { RemoveOfferDto } from './dto/remove-offer.dto.js';
 import type {
-  CityEntity,
   ICityService,
   TDocCityEntity
 } from '../city/index.js';
-import type { types } from '@typegoose/typegoose';
 import type { IFavService, TToggleFav } from '../favorite/index.js';
 import type { TNullable } from '../../types/index.js';
 import type { TTokenPayload } from '../auth/index.js';
@@ -49,8 +47,6 @@ export class OfferController extends BaseController {
     private readonly commentService: ICommentService,
     @inject(Component.CityService)
     private readonly cityService: ICityService,
-    @inject(Component.CityModel)
-    private readonly cityModel: types.ModelType<CityEntity>,
     @inject(Component.FavoriteService)
     private readonly favoriteService: IFavService
   ) {
@@ -79,7 +75,7 @@ export class OfferController extends BaseController {
       method: HttpMethod.Get,
       handler: this.indexPremiums,
       middlewares: [
-        new ValidateObjectExistMiddleware('name', 'city', this.cityModel)
+        new ValidateCityExistMiddleware(this.cityService)
       ]
     });
 
@@ -104,7 +100,7 @@ export class OfferController extends BaseController {
       middlewares: [
         new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
-        new ValidateOfferAuthorMiddleware('offerId', this.offerService)
+        new ValidateOfferAuthorMiddleware(this.offerService)
       ]
     });
 
@@ -122,7 +118,7 @@ export class OfferController extends BaseController {
       middlewares: [
         new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
-        new ValidateOfferAuthorMiddleware('offerId', this.offerService),
+        new ValidateOfferAuthorMiddleware(this.offerService),
         new ValidateDtoMiddleware(UpdateOfferDto)
       ]
     });
