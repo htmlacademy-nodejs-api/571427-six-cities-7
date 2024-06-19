@@ -18,11 +18,6 @@ import {
 import { ConsoleLogger } from '../../shared/libs/logger/console.logger.js';
 import { DEFAULT_DB_PORT } from './command.constant.js';
 import {
-  DefaultComfortService,
-  ComfortModel,
-  type IComfortService
-} from '../../shared/modules/comfort/index.js';
-import {
   CityModel,
   DefaultCityService,
   type ICityService
@@ -31,13 +26,11 @@ import {
 import type { ILogger } from '../../shared/libs/logger/index.js';
 import type { TOffer } from '../../shared/types/offer.type.js';
 import type { ICommand } from './command.interface.js';
-import type { Comfort } from '../../shared/enums/index.js';
 
 export class ImportCommand implements ICommand {
   private userService: IUserService;
   private offerService: IOfferService;
   private databaseClient: IDatabaseClient;
-  private comfortService: IComfortService;
   private cityService: ICityService;
   private logger: ILogger;
   private salt: string;
@@ -46,7 +39,6 @@ export class ImportCommand implements ICommand {
     this.logger = new ConsoleLogger();
     this.offerService = new DefaultOfferService(this.logger, OfferModel);
     this.userService = new DefaultUserService(this.logger, UserModel);
-    this.comfortService = new DefaultComfortService(this.logger, ComfortModel);
     this.cityService = new DefaultCityService(this.logger, CityModel);
     this.databaseClient = new MongoDatabaseClient(this.logger);
   }
@@ -62,16 +54,7 @@ export class ImportCommand implements ICommand {
   };
 
   private async saveOffer(offer: TOffer) {
-    const comforts: Comfort[] = [];
     const user = await this.userService.findOrCreate(offer.user, this.salt);
-
-    for (const name of offer.comforts) {
-      const existComfort = await this.comfortService.findByComfortNameOrCreate(
-        name,
-        { name }
-      );
-      comforts.push(existComfort.id);
-    }
 
     const existCity = await this.cityService.findByCityNameOrCreate(
       offer.city,
@@ -89,7 +72,7 @@ export class ImportCommand implements ICommand {
       roomQuantity: offer.roomQuantity,
       guestQuantity: offer.guestQuantity,
       rentCost: offer.rentCost,
-      comforts,
+      comforts: offer.comforts,
       userId: user.id
     });
   }

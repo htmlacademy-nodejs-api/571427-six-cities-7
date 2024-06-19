@@ -1,7 +1,6 @@
 import { inject } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
 import { HttpError } from '../errors/index.js';
-import { getValue } from './utils/get-value.js';
 import { Component } from '../../../constants/index.js';
 
 import type { NextFunction, Request, Response } from 'express';
@@ -10,7 +9,6 @@ import type { IOfferService } from '../../../modules/offer/index.js';
 
 export class ValidateOfferAuthorMiddleware implements IMiddleware {
   constructor(
-    private readonly queryFieldName: string = 'offerId',
     @inject(Component.OfferService)
     private readonly offerService: IOfferService
   ) {}
@@ -20,9 +18,7 @@ export class ValidateOfferAuthorMiddleware implements IMiddleware {
     _res: Response,
     next: NextFunction
   ): Promise<void> {
-    const value = getValue(req, this.queryFieldName);
-
-    const result = await this.offerService.findById(value as string);
+    const result = await this.offerService.findById(req.params.offerId as string);
 
     if (result!.userId.id !== req?.tokenPayload.id) {
       throw new HttpError(

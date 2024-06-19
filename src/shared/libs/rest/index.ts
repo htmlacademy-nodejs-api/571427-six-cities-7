@@ -4,7 +4,7 @@ export { AppExceptionFilter } from './exception-filter/app.exception-filter.js';
 export { HttpError } from './errors/index.js';
 export { ValidateObjectIdMiddleware } from './middleware/validate-objectid.middleware.js';
 export { ValidateDtoMiddleware } from './middleware/validate-dto.middleware.js';
-export { ValidateObjectExistMiddleware } from './middleware/validate-object-exist.middleware.js';
+export { ValidateCityExistMiddleware } from './middleware/validate-city-exist.middleware.js';
 export { UploadFileMiddleware } from './middleware/upload-file.middleware.js';
 export { ParseTokenMiddleware } from './middleware/parse-token.middleware.js';
 export { PrivateRouteMiddleware } from './middleware/private-route.middleware.js';
@@ -14,6 +14,7 @@ export { ApplicationError } from './enums/application-error.enum.js';
 export { HttpErrorExceptionFilter } from './exception-filter/http-error.exception-filter.js';
 export { ValidationExceptionFilter } from './exception-filter/validation.exception-filter.js';
 export { PathTransformer } from './transform/path-transformer.js';
+export { ValidatePasswordMiddleware } from './middleware/validate-password.middleware.js';
 
 export type { IController } from './controller/controller.interface.js';
 export type { IRoute } from './types/route.interface.js';
